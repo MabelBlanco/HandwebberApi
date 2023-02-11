@@ -1,11 +1,13 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 //Esquema
 const userSchema = mongoose.Schema({
-    username: { type: String, unique: true },
-    mail: { type: String, unique: true },
-    password: String,
+    username: { type: String, unique: true, required: true },
+    mail: { type: String, unique: true, required: true },
+    password: { type: String, required: true},
     image: String,
     subscriptions: [String],
     creation: { type: Date, default: Date.now },

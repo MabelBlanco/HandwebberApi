@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const SignupController = require('./routes/api/SignupController');
-const { body } = require('express-validator');
 
 var app = express();
 
@@ -28,21 +27,26 @@ const signupController = new SignupController();
  * Rutas del API
  */
 app.use('/api/users', require('./routes/api/users'));
-app.post('/api/users/signup', [body('username').isLength({ min: 5}).withMessage('al menos 5'),body('mail').isEmail().withMessage('Insert a valid Mail please')], signupController.post);
+// POST registro de usuario
+app.post(
+  '/api/users/signup',
+  signupController.validation(),
+  signupController.post
+);
 
 /**
  * Rutas del website
  */
-app.use('/',      require('./routes/index'));
+app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const SignupController = require('./routes/api/SignupController');
+const { body } = require('express-validator');
 
 var app = express();
 
@@ -27,7 +28,7 @@ const signupController = new SignupController();
  * Rutas del API
  */
 app.use('/api/users', require('./routes/api/users'));
-app.use('/api/users/signup', signupController.post);
+app.post('/api/users/signup', [body('username').isLength({ min: 5}).withMessage('al menos 5'),body('mail').isEmail().withMessage('Insert a valid Mail please')], signupController.post);
 
 /**
  * Rutas del website

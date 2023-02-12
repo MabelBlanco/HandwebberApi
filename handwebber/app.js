@@ -34,6 +34,7 @@ app.post(
   signupController.validation(),
   signupController.post
 );
+app.use('/api/ads', require('./routes/api/ads'));
 
 /**
  * Rutas del website

@@ -27,7 +27,7 @@ async function main() {
 main().catch(err => console.log('Hubo un error:', err));
 
 async function initUsers() {
-  // borrar todos los documentos de agentes
+  // borrar todos los documentos de usuarios
   const deleted = await User.deleteMany();
   console.log(`Eliminados ${deleted.deletedCount} usuarios.`);
 

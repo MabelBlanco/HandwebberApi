@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const dataValidator = require('./dataValidator');
 
 //Esquema
 const adSchema = mongoose.Schema({
@@ -11,12 +12,30 @@ const adSchema = mongoose.Schema({
   custom: { type: Boolean, required: true, default: false },
   price: { type: Number, required: true },
   stock: { type: Number, default: 0 },
-  tag: { type: String, required: true },
-  subscriptions: [String],
+  tags: { type: Array, required: true },
+  idUser: { type: String, required: true },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
 });
 
+//DB indexes
+adSchema.index({ name: 1 });
+adSchema.index({ name: -1 });
+adSchema.index({ price: 1 });
+adSchema.index({ price: -1 });
+adSchema.index({ tags: 1 });
+adSchema.index({ tags: -1 });
+adSchema.index({ update: 1 });
+
+/**
+ *
+ * @param {object} filters Possible filters: name, price, tag
+ * @param {integer} skip Show result from skip+1
+ * @param {integer} limit Show only "limit" results
+ * @param {string} sort Sort results by the indicated property
+ * @param {string} fields Return only the indicated fields
+ * @returns {object} JSON containing the search results in DB
+ */
 adSchema.statics.search = function (filters, skip, limit, sort, fields) {
   const query = Advertisement.find(filters);
 
@@ -27,6 +46,8 @@ adSchema.statics.search = function (filters, skip, limit, sort, fields) {
 
   return query.exec();
 };
+
+adSchema.statics.dataValidator = dataValidator;
 
 //Crear modelo
 const Advertisement = mongoose.model('Advertisement', adSchema);

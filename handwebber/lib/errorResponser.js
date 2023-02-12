@@ -7,7 +7,6 @@ const createError = require('http-errors');
  * @param {http-error} err Error message created with createHttpError
  * @param {*} req request passed by app
  * @param {*} res response passed by app
- * @param {*} next
  */
 function errorResponser(err, req, res) {
   const errResponse = {

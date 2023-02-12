@@ -39,23 +39,23 @@ class SignupController {
     } catch (error) {
       res.statusCode = 400; //codigo de la respuesta
       error.statusCode = 400; //modifico el codigo del error
-      
+
       const notAvailable = error.keyValue; // Capturo el campo del eror
       const key = Object.keys(notAvailable)[0];
       const value = Object.values(notAvailable)[0];
-      
+
       error.msg = `The ${key} ${value} is not available`;
 
       // construyo la respuesta
-      const result = {
+      const errorResult = {
         error: true,
         statusCode: 400,
         message: `The ${key} ${value} is not available`,
         current: { [key]: value },
       };
 
-      //Respondo con el objeto result
-      res.json(result);
+      //Respondo con el objeto errorResult
+      res.json(errorResult);
     }
   }
 }

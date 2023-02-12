@@ -20,8 +20,18 @@ router.get(
       next(err);
       return;
     }
+
+    //Extracting the data for search
+    let searchParameters = Advertisement.assingSearchParameters(req);
+
     try {
-      const ads = await Advertisement.search();
+      const ads = await Advertisement.search(
+        searchParameters.filters,
+        searchParameters.skip,
+        searchParameters.limit,
+        searchParameters.sort,
+        searchParameters.fields
+      );
       res.status(200).json({ result: ads });
     } catch (error) {
       next(createError(500, 'Advertisements are not available in this moment'));

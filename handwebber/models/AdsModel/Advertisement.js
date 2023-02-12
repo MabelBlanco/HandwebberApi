@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 const dataValidator = require('./dataValidator');
+const assingSearchParameters = require('./dataFilters');
 
 //Esquema
 const adSchema = mongoose.Schema({
@@ -48,6 +49,7 @@ adSchema.statics.search = function (filters, skip, limit, sort, fields) {
 };
 
 adSchema.statics.dataValidator = dataValidator;
+adSchema.statics.assingSearchParameters = assingSearchParameters;
 
 //Crear modelo
 const Advertisement = mongoose.model('Advertisement', adSchema);

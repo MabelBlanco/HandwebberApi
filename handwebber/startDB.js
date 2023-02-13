@@ -33,11 +33,7 @@ async function main() {
 
 main().catch((err) => console.log('Hubo un error:', err));
 
-<<<<<<< HEAD
 async function initUsers(data) {
-=======
-async function initUsers() {
->>>>>>> 92fd69b6d169e1a8a0f81083b803650fd25e5efb
   // borrar todos los documentos de usuarios
   const deleted = await User.deleteMany();
   console.log(`Eliminados ${deleted.deletedCount} usuarios.`);
@@ -92,9 +88,4 @@ function pregunta(texto) {
       resolve(false);
     });
   });
-<<<<<<< HEAD
 }
-=======
-
-};
->>>>>>> 92fd69b6d169e1a8a0f81083b803650fd25e5efb

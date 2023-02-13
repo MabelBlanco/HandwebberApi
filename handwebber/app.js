@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
-const errorResponser = require('./lib/errorResponser')
+const errorResponser = require('./lib/errorResponser');
 
 var app = express();
 
@@ -41,7 +41,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   errorResponser(err, req, res);
 });
 

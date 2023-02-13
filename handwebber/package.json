@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "init": "node startDB.js",
     "start": "node ./bin/www",
     "dev": "cross-env DEBUG=handwebber:* nodemon ./bin/www"
   },

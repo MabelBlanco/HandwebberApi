@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const SignupController = require('./routes/api/SignupController');
 const cors = require('cors');
+const errorResponser = require('./lib/errorResponser')
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.post(
   signupController.validation(),
   signupController.post
 );
+app.use('/api/ads', require('./routes/api/ads'));
 
 /**
  * Rutas del website
@@ -43,18 +45,13 @@ app.use('/users', require('./routes/users'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+  const error = createError(404, "This is not the page you're looking for...");
+  next(error);
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  errorResponser(err, req, res);
 });
 
 module.exports = app;

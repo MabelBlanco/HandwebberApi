@@ -21,16 +21,13 @@ class SignupController {
     //Extracting the data for search
     let searchParameters = User.assingSearchParameters(req);
 
-    try{
-      const result = await User.search(
-        searchParameters.filters
-      );
+    try {
+      const result = await User.search(searchParameters.filters);
 
-    res.status(200).json({ results: result });
-    }catch(error){
-      next(createError(400, 'ERROR'))
+      res.status(200).json({ results: result });
+    } catch (error) {
+      next(createError(400, 'ERROR'));
     }
-    
   }
 
   async getUserById(req, res, next) {
@@ -51,7 +48,7 @@ class SignupController {
     } catch (error) {
       const err = {
         status: 422,
-        message: error.array()[0].msg,
+        message: error.array(),
       };
       next(err);
       return;

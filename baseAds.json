@@ -1,0 +1,22 @@
+{
+  "advertisements":[
+    {
+      "active": true,
+      "name": "Test advertisement",
+      "description": "lorem ipsum etc, etc, etc...",
+      "custom": false,
+      "price": 33.5,
+      "stock": 4,
+      "tags": ["testing"],
+      "idUser": "123testing"
+    }
+  ],
+  "users":[
+    {
+      "username": "jossid",
+      "mail": "alfredvays@gmail.com",
+      "image": "",
+      "subscriptions": []
+    }
+  ]
+}

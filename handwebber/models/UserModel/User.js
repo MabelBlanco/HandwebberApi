@@ -20,12 +20,14 @@ userSchema.index({ subscriptions: 1});
 userSchema.index({ subscriptions: -1});
 userSchema.index({ update: 1});
 
+// método estático de busqueda
 userSchema.statics.search = function (filters) {
     const query = User.find(filters);
 
     return query.exec();
 };
 
+// método estático para los filtros
 userSchema.statics.assingSearchParameters = assingSearchParameters;
 
 // método estático para hashear password

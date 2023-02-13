@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const assingSearchParameters = require('./dataFilters');
 
 //Esquema
 const userSchema = mongoose.Schema({
@@ -13,6 +14,19 @@ const userSchema = mongoose.Schema({
     creation: { type: Date, default: Date.now },
     update: { type: Date, default: Date.now }
 });
+
+//DB indexes
+userSchema.index({ subscriptions: 1});
+userSchema.index({ subscriptions: -1});
+userSchema.index({ update: 1});
+
+userSchema.statics.search = function (filters) {
+    const query = User.find(filters);
+
+    return query.exec();
+};
+
+userSchema.statics.assingSearchParameters = assingSearchParameters;
 
 // método estático para hashear password
 userSchema.statics.hashPassword = function(passwordEnClaro) {

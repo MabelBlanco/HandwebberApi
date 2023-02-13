@@ -17,7 +17,35 @@ class SignupController {
     ];
   }
 
-  async post(req, res, next) {
+  async getAllUsers(req, res, next) {
+    //Extracting the data for search
+    let searchParameters = User.assingSearchParameters(req);
+
+    try{
+      const result = await User.search(
+        searchParameters.filters
+      );
+
+    res.status(200).json({ results: result });
+    }catch(error){
+      next(createError(400, 'ERROR'))
+    }
+    
+  }
+
+  async getUserById(req, res, next) {
+    try {
+      const _id = req.params.id;
+
+      const user = await User.find({ _id: _id });
+
+      res.status(200).json({ result: user });
+    } catch (error) {
+      next(createError(404, 'User not found'));
+    }
+  }
+
+  async postSignup(req, res, next) {
     try {
       validationResult(req).throw();
     } catch (error) {
@@ -46,7 +74,7 @@ class SignupController {
       const userResult = await User.create(newUser);
 
       //La respuesta es el documento de usuario
-      res.json({ result: userResult });
+      res.status(200).json({ result: userResult });
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];

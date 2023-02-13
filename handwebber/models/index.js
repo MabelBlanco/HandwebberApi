@@ -1,4 +1,4 @@
 module.exports = {
-    User: require('./User'),
+    User: require('./UserModel/User'),
     Advertisement: require('./AdsModel/Advertisement'),
 }

@@ -3,7 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const SignupController = require('./routes/api/SignupController');
 const cors = require('cors');
 const errorResponser = require('./lib/errorResponser')
 
@@ -23,18 +22,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const signupController = new SignupController();
-
 /**
  * Rutas del API
  */
 app.use('/api/users', require('./routes/api/users'));
-// POST registro de usuario
-app.post(
-  '/api/users/signup',
-  signupController.validation(),
-  signupController.post
-);
 app.use('/api/ads', require('./routes/api/ads'));
 
 /**

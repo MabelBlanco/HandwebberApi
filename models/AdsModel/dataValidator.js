@@ -56,7 +56,7 @@ module.exports = function adDataValidator(method) {
   if (methodLow === 'post') {
     return [
       body('active')
-        .exists()
+        .if(body('active').exists())
         .isBoolean()
         .withMessage('active must exists and being boolean'),
       body('name')
@@ -80,7 +80,7 @@ module.exports = function adDataValidator(method) {
       body('stock')
         .if(body('stock').exists())
         .isInt()
-        .withMessage('custom must exists and being boolean'),
+        .withMessage('stock must be integer'),
       body('price')
         .exists()
         .isFloat()
@@ -93,14 +93,6 @@ module.exports = function adDataValidator(method) {
           `tags must be an array of strings containing one tag at least`
         ),
       body('idUser').exists().isString().withMessage('idUser not provided'),
-      body('creation')
-        .if(body('creation').exists())
-        .isDate()
-        .withMessage('date of creation not provided'),
-      body('update')
-        .exists()
-        .isDate()
-        .withMessage('date of update not provided'),
     ];
   }
 };

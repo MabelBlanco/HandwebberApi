@@ -17,6 +17,23 @@ class SignupController {
     ];
   }
 
+  updateValidation() {
+    return [
+      body('username')
+        .if(body('username').exists())
+        .isAlphanumeric()
+        .withMessage('Username must be alphanumeric'),
+      body('mail')
+        .if(body('mail').exists())
+        .isEmail()
+        .withMessage('Insert a valid mail please'),
+      body('password')
+        .if(body('password').exists())
+        .isLength({ min: 8 })
+        .withMessage('Password min length 8 characters'),
+    ];
+  }
+
   async getAllUsers(req, res, next) {
     //Extracting the data for search
     let searchParameters = User.assingSearchParameters(req);
@@ -72,6 +89,55 @@ class SignupController {
 
       //La respuesta es el documento de usuario
       res.status(200).json({ result: userResult });
+    } catch (error) {
+      const notAvailable = error.keyValue; // Capturo el campo del error
+      const key = Object.keys(notAvailable)[0];
+      const value = Object.values(notAvailable)[0];
+
+      const message = `The ${key} ${value} is not available`;
+
+      next(createError(409, message));
+    }
+  }
+
+  async updateUser(req, res, next) {
+    try {
+      validationResult(req).throw();
+    } catch (error) {
+      const err = {
+        status: 422,
+        message: error.array(),
+      };
+      next(err);
+      return;
+    }
+
+    try {
+      const _id = req.params.id;
+      const data = req.body;
+      if (data.password) {
+        data.password = await User.hashPassword(data.password);
+      }
+
+      if (data.subscriptions) {
+        const user = await User.find({ _id: _id });
+        const subscriptions = user[0].subscriptions;
+        if (subscriptions.includes(data.subscriptions)) {
+          const subscription = subscriptions.filter((e) => e !== data.subscriptions);
+          data.subscriptions = subscription;
+        } else {
+          subscriptions.unshift(data.subscriptions);
+          data.subscriptions = subscriptions;
+        };
+      };
+
+      data.update = Date.now();
+
+      const updateUser = await User.findOneAndUpdate({ _id: _id }, data, {
+        new: true, // esto hace que nos devuelva el documento actualizado
+      });
+
+      res.status(200).json({ result: updateUser });
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];

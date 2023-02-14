@@ -20,4 +20,7 @@ router.post(
   signupController.postSignup
 );
 
+/* PUT update user by ID */
+router.put('/:id', signupController.updateValidation(), signupController.updateUser);
+
 module.exports = router;

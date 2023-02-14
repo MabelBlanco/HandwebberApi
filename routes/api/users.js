@@ -23,4 +23,7 @@ router.post(
 /* PUT update user by ID */
 router.put('/:id', signupController.updateValidation(), signupController.updateUser);
 
+/* DELETE user by ID */
+router.delete('/:id', signupController.deleteUser);
+
 module.exports = router;

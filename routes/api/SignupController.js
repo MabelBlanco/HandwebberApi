@@ -43,7 +43,7 @@ class SignupController {
 
       res.status(200).json({ results: result });
     } catch (error) {
-      next(createError(400, 'ERROR'));
+      next(createError(400, 'ERROR in DB'));
     }
   }
 
@@ -51,7 +51,7 @@ class SignupController {
     try {
       const _id = req.params.id;
 
-      const user = await User.find({ _id: _id });
+      const user = await User.findById({ _id: _id });
 
       res.status(200).json({ result: user });
     } catch (error) {
@@ -123,13 +123,15 @@ class SignupController {
         const user = await User.find({ _id: _id });
         const subscriptions = user[0].subscriptions;
         if (subscriptions.includes(data.subscriptions)) {
-          const subscription = subscriptions.filter((e) => e !== data.subscriptions);
+          const subscription = subscriptions.filter(
+            (e) => e !== data.subscriptions
+          );
           data.subscriptions = subscription;
         } else {
           subscriptions.unshift(data.subscriptions);
           data.subscriptions = subscriptions;
-        };
-      };
+        }
+      }
 
       data.update = Date.now();
 
@@ -139,13 +141,35 @@ class SignupController {
 
       res.status(200).json({ result: updateUser });
     } catch (error) {
-      const notAvailable = error.keyValue; // Capturo el campo del error
-      const key = Object.keys(notAvailable)[0];
-      const value = Object.values(notAvailable)[0];
+      if (!error.keyValue) {
+        next(createError(400, 'Bad Request'));
+      } else {
+        const notAvailable = error.keyValue; // Capturo el campo del error
+        const key = Object.keys(notAvailable)[0];
+        const value = Object.values(notAvailable)[0];
 
-      const message = `The ${key} ${value} is not available`;
+        const message = `The ${key} ${value} is not available`;
 
-      next(createError(409, message));
+        next(createError(409, message));
+      }
+    }
+  }
+
+  async deleteUser(req, res, next) {
+    try {
+      const id = req.params.id;
+      const users = await User.find({ _id: id });
+      const userDeleted = await User.deleteOne({ _id: id });
+      const { username, _id, mail } = users[0];
+      const response = {
+        ...userDeleted,
+        username,
+        _id,
+        mail,
+      };
+      res.status(200).json({ result: response });
+    } catch (error) {
+      next(createError(400, 'User not in DB'));
     }
   }
 }

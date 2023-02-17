@@ -1,5 +1,5 @@
 {
-  "advertisements":[
+  "advertisements": [
     {
       "active": true,
       "name": "Test advertisement",
@@ -9,9 +9,19 @@
       "stock": 4,
       "tags": ["testing"],
       "idUser": "123testing"
+    },
+    {
+      "active": true,
+      "name": "Second advertisement",
+      "description": "Otro lorem ipsum etc, etc, etc...",
+      "custom": true,
+      "price": 150,
+      "stock": 0,
+      "tags": ["testing", "custom"],
+      "idUser": "123testing"
     }
   ],
-  "users":[
+  "users": [
     {
       "username": "jossid",
       "mail": "alfredvays@gmail.com",

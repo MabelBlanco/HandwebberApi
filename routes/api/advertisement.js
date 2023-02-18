@@ -4,6 +4,7 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 const createError = require('http-errors');
 const router = express.Router();
+const upload = require('../../lib/uploadConfig');
 const { Advertisement } = require('../../models');
 
 router.get(
@@ -41,6 +42,7 @@ router.get(
 
 router.post(
   '/',
+  upload.single('image'),
   Advertisement.dataValidator('post'),
   async function (req, res, next) {
     try {

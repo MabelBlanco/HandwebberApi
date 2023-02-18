@@ -1,7 +1,8 @@
 "use strict";
 
 const express = require("express");
-const router = express.Router();
+const router = express.Router();  
+const upload = require('../../lib/uploadConfig');
 const SignupController = require("./SignupController");
 const loginRouter = require("./login");
 
@@ -16,6 +17,7 @@ router.get("/:id", signupController.getUserById);
 /* POST signup user */
 router.post(
   "/signup",
+  upload.single('image'),
   signupController.validation(),
   signupController.postSignup
 );

@@ -60,6 +60,8 @@ class SignupController {
   }
 
   async postSignup(req, res, next) {
+    console.log(req.file)
+    console.log(req.body)
     try {
       validationResult(req).throw();
     } catch (error) {
@@ -79,7 +81,7 @@ class SignupController {
         username: user.username,
         mail: user.mail,
         password: await User.hashPassword(user.password),
-        image: user.image || '',
+        image: `${req.file.destination}\\${req.file.filename}` || '',
         created: Date.now(),
         update: Date.now(),
       };

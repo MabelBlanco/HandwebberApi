@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
-const errorResponseConfigure = require('./lib/errorResponseConfigure');
+const errorResponser = require('./lib/errorResponseConfigure');
 
 var app = express();
 
@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 /**
  * Rutas del API
@@ -43,8 +44,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use((err, req, res, next) => {
-  const response = errorResponseConfigure(err);
-  res.status(response.status).json(response);
+  errorResponser(err, req, res);
 });
 
 module.exports = app;

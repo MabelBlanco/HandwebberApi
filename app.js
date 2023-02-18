@@ -43,7 +43,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use((err, req, res, next) => {
-  const response = errorResponseConfigure(err);
+  const response = errorResponser(err, req, res);
   res.status(response.status).json(response);
 });
 

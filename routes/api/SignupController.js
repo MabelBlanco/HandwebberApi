@@ -3,6 +3,7 @@
 const createError = require('http-errors');
 const { body, validationResult } = require('express-validator');
 const { User } = require('../../models');
+const fs = require('fs');
 
 class SignupController {
   validation() {
@@ -69,6 +70,15 @@ class SignupController {
         status: 422,
         message: error.array(),
       };
+
+      //If there's a validation error, we'll erase the file uploaded
+      if (req.file) {
+        const fileName = req.file?.destination + '/' + req.file?.filename;
+        fs.unlink(fileName, (err) => {
+          console.log(err);
+        });
+      }
+
       next(err);
       return;
     }
@@ -77,11 +87,17 @@ class SignupController {
       //Capturo el body
       const user = req.body;
       //Añado los campos para la peticion
+      let image = null;
+      if (req.file) {
+        const destination = req.file?.destination.split('public')[1];
+
+        image = path.join(destination, req.file?.filename);
+      }
       const newUser = {
         username: user.username,
         mail: user.mail,
         password: await User.hashPassword(user.password),
-        image: `${req.file?.destination}\\${req.file?.filename}` || '',
+        image,
         created: Date.now(),
         update: Date.now(),
       };

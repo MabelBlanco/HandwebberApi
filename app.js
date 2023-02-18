@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
-const errorResponser = require('./lib/errorResponser');
+const errorResponser = require('./lib/errorResponseConfigure');
 
 var app = express();
 
@@ -22,10 +22,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 /**
  * Rutas del API
  */
 app.use('/api/users', require('./routes/api/users'));
+app.use('/api/users/login', require('./routes/api/login'));
 app.use('/api/advertisement', require('./routes/api/advertisement'));
 
 /**

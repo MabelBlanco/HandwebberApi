@@ -30,7 +30,7 @@ router.post("/", async (req, res, next) => {
     });
 
     // Send to user this JWT
-    res.json({ jwtToken });
+    res.json( jwtToken );
   } catch (error) {
     next(error);
   }

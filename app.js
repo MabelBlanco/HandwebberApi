@@ -22,7 +22,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 /**
  * Rutas del API
  */
@@ -44,7 +43,8 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use((err, req, res, next) => {
-  errorResponser(err, req, res);
+  const response = errorResponser(err, req, res);
+  res.status(response.status).json(response);
 });
 
 module.exports = app;

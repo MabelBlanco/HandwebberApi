@@ -60,8 +60,8 @@ class SignupController {
   }
 
   async postSignup(req, res, next) {
-    console.log(req.file)
-    console.log(req.body)
+    console.log(req.file);
+    console.log(req.body);
     try {
       validationResult(req).throw();
     } catch (error) {
@@ -81,7 +81,7 @@ class SignupController {
         username: user.username,
         mail: user.mail,
         password: await User.hashPassword(user.password),
-        image: `${req.file.destination}\\${req.file.filename}` || '',
+        image: `${req.file?.destination}\\${req.file?.filename}` || '',
         created: Date.now(),
         update: Date.now(),
       };
@@ -92,6 +92,7 @@ class SignupController {
       //La respuesta es el documento de usuario
       res.status(200).json({ result: userResult });
     } catch (error) {
+      console.log(error);
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
       const value = Object.values(notAvailable)[0];

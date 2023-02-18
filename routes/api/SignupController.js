@@ -57,7 +57,7 @@ class SignupController {
     } catch (error) {
       next(createError(404, 'User not found'));
     }
-  }
+  };
 
   async postSignup(req, res, next) {
     console.log(req.file)
@@ -92,6 +92,7 @@ class SignupController {
       //La respuesta es el documento de usuario
       res.status(200).json({ result: userResult });
     } catch (error) {
+      console.log(error)
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
       const value = Object.values(notAvailable)[0];

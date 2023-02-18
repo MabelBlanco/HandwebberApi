@@ -15,7 +15,7 @@
  *
  * Returns:
  * If price is one number, the function returns the number in integer format;
- * If price are two numbers --> objetct containig
+ * If price are two numbers --> objetct containing
  *  {$gte: first number, $lte: second number};
  * If price is number+'-' --> object {$gte: number};
  * If price is '-'+number --> object {$lte: number}

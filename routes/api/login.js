@@ -1,36 +1,35 @@
-var express = require("express");
+var express = require('express');
 const router = express.Router();
 
-const User = require("../../models/Usermodel/User");
-const jwt = require("jsonwebtoken");
+const User = require('../../models/Usermodel/User');
+const jwt = require('jsonwebtoken');
+const createError = require('http-errors');
 
-router.post("/", async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     const { mail, password } = req.body;
 
     const user = await User.findOne({ mail });
 
     if (!user) {
-      const error = new Error("This email do not have an account");
-      error.status = 401;
+      const error = createError(401, 'This email do not have an account');
       next(error);
       return;
     }
 
     if (!(await user.comparePasswords(password))) {
-      const error = new Error("Wrong password");
-      error.status = 401;
+      const error = createError(401, 'Wrong password');
       next(error);
       return;
     }
 
     // Generate JWT
     const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d", // 1 day
+      expiresIn: '1d', // 1 day
     });
 
     // Send to user this JWT
-    res.json( jwtToken );
+    res.json(jwtToken);
   } catch (error) {
     next(error);
   }

@@ -3,7 +3,8 @@
 const createError = require('http-errors');
 const { body, validationResult } = require('express-validator');
 const { User } = require('../../models');
-const fs = require('fs');
+const path = require('path');
+const filesEraser = require('../../lib/filesEraser');
 
 class SignupController {
   validation() {
@@ -61,8 +62,6 @@ class SignupController {
   }
 
   async postSignup(req, res, next) {
-    console.log(req.file);
-    console.log(req.body);
     try {
       validationResult(req).throw();
     } catch (error) {
@@ -73,10 +72,7 @@ class SignupController {
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        const fileName = req.file?.destination + '/' + req.file?.filename;
-        fs.unlink(fileName, (err) => {
-          console.log(err);
-        });
+        filesEraser(req.file);
       }
 
       next(err);
@@ -113,6 +109,11 @@ class SignupController {
       const value = Object.values(notAvailable)[0];
 
       const message = `The ${key} ${value} is not available`;
+
+      //If there's a validation error, we'll erase the file uploaded
+      if (req.file) {
+        filesEraser(req.file);
+      }
 
       next(createError(409, message));
     }

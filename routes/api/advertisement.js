@@ -8,6 +8,7 @@ const upload = require('../../lib/uploadConfig');
 const { Advertisement } = require('../../models');
 const path = require('path');
 const filesEraser = require('../../lib/filesEraser');
+const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
 
 router.get(
   '/',
@@ -64,6 +65,7 @@ router.get(
 
 router.post(
   '/',
+  jwtAuthMiddleware,
   upload.single('image'),
   Advertisement.dataValidator('post'),
   async function (req, res, next) {
@@ -91,6 +93,7 @@ router.post(
         active: true,
         created: Date.now(),
         update: Date.now(),
+        idUser: req.userId,
       };
 
       let image = null;

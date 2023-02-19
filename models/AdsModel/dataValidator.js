@@ -92,7 +92,7 @@ module.exports = function adDataValidator(method) {
         .withMessage(
           `tags must be an array of strings containing one tag at least`
         ),
-      body('idUser').exists().isString().withMessage('idUser not provided'),
+      //body('idUser').exists().isString().withMessage('idUser not provided'),
     ];
   }
 };

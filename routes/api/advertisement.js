@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const { validationResult } = require('express-validator');
-const createError = require('http-errors');
+const express = require("express");
+const { validationResult } = require("express-validator");
+const createError = require("http-errors");
 const router = express.Router();
-const upload = require('../../lib/uploadConfig');
-const { Advertisement } = require('../../models');
-const fs = require('fs');
-const path = require('path');
+const upload = require("../../lib/uploadConfig");
+const { Advertisement } = require("../../models");
+const fs = require("fs");
+const path = require("path");
 
 router.get(
-  '/',
-  Advertisement.dataValidator('get'),
+  "/",
+  Advertisement.dataValidator("get"),
   async function (req, res, next) {
     try {
       validationResult(req).throw();
@@ -37,15 +37,35 @@ router.get(
       );
       res.status(200).json({ result: ads });
     } catch (error) {
-      next(createError(500, 'Advertisements are not available in this moment'));
+      next(createError(500, "Advertisements are not available in this moment"));
+    }
+  }
+);
+
+router.get(
+  "/:id",
+  Advertisement.dataValidator("get"),
+  async function (req, res, next) {
+    try {
+      const _id = req.params.id;
+      const advert = await Advertisement.findById({ _id: _id });
+      res.status(200).json({ result: advert });
+      validationResult(req).throw();
+    } catch (error) {
+      const err = {
+        status: 422,
+        //message: error.array(),
+      };
+      next(err);
+      return;
     }
   }
 );
 
 router.post(
-  '/',
-  upload.single('image'),
-  Advertisement.dataValidator('post'),
+  "/",
+  upload.single("image"),
+  Advertisement.dataValidator("post"),
   async function (req, res, next) {
     try {
       validationResult(req).throw();
@@ -57,7 +77,7 @@ router.post(
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        const fileName = req.file?.destination + '/' + req.file?.filename;
+        const fileName = req.file?.destination + "/" + req.file?.filename;
         fs.unlink(fileName, (err) => {
           console.log(err);
         });
@@ -78,7 +98,7 @@ router.post(
 
       let image = null;
       if (req.file) {
-        const destination = req.file?.destination.split('public')[1];
+        const destination = req.file?.destination.split("public")[1];
 
         image = path.join(destination, req.file?.filename);
       }
@@ -96,7 +116,7 @@ router.post(
       res.status(200).json({ result: advertisementResult });
     } catch (error) {
       next(
-        createError(500, 'Internal Error: Impossible create the advertisement')
+        createError(500, "Internal Error: Impossible create the advertisement")
       );
     }
   }

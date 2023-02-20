@@ -93,7 +93,6 @@ router.post(
         active: true,
         created: Date.now(),
         update: Date.now(),
-        idUser: req.userId,
       };
 
       let image = null;
@@ -105,6 +104,7 @@ router.post(
       const newAdvertisement = new Advertisement({
         ...defaultValues,
         ...advertisement,
+        idUser: req.userId,
         image,
       });
 

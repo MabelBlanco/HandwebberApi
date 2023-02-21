@@ -126,4 +126,19 @@ router.post(
   }
 );
 
+router.delete(
+  '/:id',
+    async function (req, res, next) {
+      try {
+        const id = req.params.id;
+        const ad = await Advertisement.search({_id: id});
+        const deletedAd = await Advertisement.deleteOne({_id: id});
+        const response = {deletedAd, ad}  
+        res.status(200).json({result: response})
+      } catch (error) {
+        next(createError(400, 'Advertisement not in DB'))
+      }     
+    } 
+  );
+
 module.exports = router;

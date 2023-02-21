@@ -5,6 +5,7 @@ const router = express.Router();
 const upload = require('../../lib/uploadConfig');
 const SignupController = require("./SignupController");
 const loginRouter = require("./login");
+const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
 
 const signupController = new SignupController();
 
@@ -25,13 +26,14 @@ router.post(
 /* PUT update user by ID */
 router.put(
   "/:id",
+  jwtAuthMiddleware,
   upload.single('image'),
   signupController.updateValidation(),
   signupController.updateUser
 );
 
 /* DELETE user by ID */
-router.delete("/:id", signupController.deleteUser);
+router.delete("/:id", jwtAuthMiddleware,signupController.deleteUser);
 
 /* LOGIN user*/
 router.use("/login", loginRouter);

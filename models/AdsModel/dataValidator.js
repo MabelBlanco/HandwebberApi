@@ -53,8 +53,8 @@ module.exports = function adDataValidator(method) {
       query('sort')
         .if(query('sort').exists())
         .toLowerCase()
-        .isIn(['name', '-name', 'price', '-price'])
-        .withMessage('You can only sort by: (-)name, (-)price'),
+        .isIn(['name', '-name', 'price', '-price', 'update', '-update'])
+        .withMessage('You can only sort by: (-)name, (-)price, (-)update'),
     ];
   }
   //Post fields

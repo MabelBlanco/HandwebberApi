@@ -43,6 +43,15 @@ router.get(
   }
 );
 
+router.get('/count', async function (req, res, next) {
+  try {
+    const count = await Advertisement.count();
+    res.status(200).json({ result: count });
+  } catch (error) {
+    next(createError(500, 'Advertisements are not available in this moment'));
+  }
+});
+
 router.get(
   '/:id',
   Advertisement.dataValidator('get'),

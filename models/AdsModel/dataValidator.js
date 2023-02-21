@@ -34,6 +34,11 @@ module.exports = function adDataValidator(method) {
         .isString()
         .toLowerCase()
         .withMessage('tag must be an string'),
+      query('idUser')
+        .if(query('idUser').exists())
+        .isString()
+        .notEmpty()
+        .withMessage('idUser must be a not empty string'),
 
       //Pagination fields
       query('skip')

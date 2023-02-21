@@ -127,13 +127,30 @@ class SignupController {
         status: 422,
         message: error.array(),
       };
+
+      //If there's a validation error, we'll erase the file uploaded
+      if (req.file) {
+        filesEraser(req.file);
+      }
+
       next(err);
       return;
     }
 
+    
+
     try {
       const _id = req.params.id;
       const data = req.body;
+
+      let image = null;
+      console.log(req.file)
+      if (req.file) {
+        const destination = req.file?.destination.split('public')[1];
+
+        image = path.join(destination, req.file?.filename);
+        data.image = image;
+      }
       if (data.password) {
         data.password = await User.hashPassword(data.password);
       }

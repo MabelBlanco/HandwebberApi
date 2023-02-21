@@ -25,6 +25,7 @@ router.post(
 /* PUT update user by ID */
 router.put(
   "/:id",
+  upload.single('image'),
   signupController.updateValidation(),
   signupController.updateUser
 );

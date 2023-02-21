@@ -49,6 +49,7 @@ Also you can apply filters in the query params:
 
 - `name=string` --> it will return the ads which contains the string provided in their name
 - `tag=string` --> it will return the ads which contains the string provided in their tags
+- `idUser=string` --> it will return the ads which contains the idUser provided
 - `price=...` --> it will return the ads selon the range indicated. The range works:
 
   - **one number** --> it will return the ads with exact price

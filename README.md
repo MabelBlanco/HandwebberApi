@@ -16,6 +16,7 @@ Create an `.env` file. You have an configuration example in `.env.example`.
 
 - You have to indicate the conexion string to mongodb.
 - You have to indicate the private JWT key.
+- You have to indicate the maximun image size files in megabytes: `MAX_FILES_SIZE_MB=5` (5 MB maximun). 5MB is the default value if this variable is not set.
 - Default port for the application is 3000. If you want to change it, it's necessary to indicate the PORT environment variable, with the port to use. For example: `PORT=8000`.  
   Run `npm run init`.
 

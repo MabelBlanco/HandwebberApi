@@ -54,7 +54,6 @@ describe('assingSearchParameters test...', () => {
     };
 
     const result = assingSearchParameters(req);
-    console.log(result);
     expect(result.skip).toStrictEqual(req.query.skip);
     expect(result).toMatchObject(responseExpected);
   });
@@ -71,7 +70,6 @@ describe('assingSearchParameters test...', () => {
     };
 
     const result = assingSearchParameters(req);
-    console.log(result);
     expect(result.limit).toStrictEqual(req.query.limit);
     expect(result).toMatchObject(responseExpected);
   });
@@ -88,7 +86,6 @@ describe('assingSearchParameters test...', () => {
     };
 
     const result = assingSearchParameters(req);
-    console.log(result);
     expect(result.sort).toStrictEqual(req.query.sort);
     expect(result).toMatchObject(responseExpected);
   });
@@ -105,7 +102,6 @@ describe('assingSearchParameters test...', () => {
     };
 
     const result = assingSearchParameters(req);
-    console.log(result);
     expect(result.fields).toStrictEqual(req.query.fields);
     expect(result).toMatchObject(responseExpected);
   });

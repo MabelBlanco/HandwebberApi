@@ -36,21 +36,24 @@ router.get(
         searchParameters.sort,
         searchParameters.fields
       );
-      res.status(200).json({ result: ads });
+
+      const totalNumOfAds = await Advertisement.count(searchParameters.filters);
+      const adWithMaxPrice = await Advertisement.findAdWithMaxPrice();
+      const maxPrice = adWithMaxPrice[0].price;
+      const response = {
+        result: ads,
+        meta: {
+          totalNumOfAds,
+          maxPrice,
+        },
+      };
+
+      res.status(200).json(response);
     } catch (error) {
       next(createError(500, 'Advertisements are not available in this moment'));
     }
   }
 );
-
-router.get('/count', async function (req, res, next) {
-  try {
-    const count = await Advertisement.count();
-    res.status(200).json({ result: count });
-  } catch (error) {
-    next(createError(500, 'Advertisements are not available in this moment'));
-  }
-});
 
 router.get(
   '/:id',
@@ -135,19 +138,16 @@ router.post(
   }
 );
 
-router.delete(
-  '/:id',
-    async function (req, res, next) {
-      try {
-        const id = req.params.id;
-        const ad = await Advertisement.search({_id: id});
-        const deletedAd = await Advertisement.deleteOne({_id: id});
-        const response = {deletedAd, ad}  
-        res.status(200).json({result: response})
-      } catch (error) {
-        next(createError(400, 'Advertisement not in DB'))
-      }     
-    } 
-  );
+router.delete('/:id', async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const ad = await Advertisement.search({ _id: id });
+    const deletedAd = await Advertisement.deleteOne({ _id: id });
+    const response = { deletedAd, ad };
+    res.status(200).json({ result: response });
+  } catch (error) {
+    next(createError(400, 'Advertisement not in DB'));
+  }
+});
 
 module.exports = router;

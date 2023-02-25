@@ -57,7 +57,7 @@ module.exports = function assingSearchParameters(req) {
     filters.name = { $regex: req.query.name.toLowerCase(), $options: 'i' };
   }
   if (req.query.tag) {
-    filters.tags = req.query.tag.toLowerCase();
+    filters.tags = { $regex: req.query.tag.toLowerCase(), $options: 'i' };
   }
   if (req.query.price) {
     filters.price = priceFilter(req.query.price);

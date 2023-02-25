@@ -47,6 +47,12 @@ adSchema.statics.search = function (filters, skip, limit, sort, fields) {
 
   return query.exec();
 };
+adSchema.statics.findAdWithMaxPrice = async function () {
+  const query = Advertisement.find();
+  query.sort({ price: -1 });
+  query.limit(1);
+  return query.exec();
+};
 
 adSchema.statics.dataValidator = dataValidator;
 adSchema.statics.assingSearchParameters = assingSearchParameters;

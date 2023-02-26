@@ -61,6 +61,18 @@ class SignupController {
     }
   }
 
+  async getUserByUsername(req, res, next) {
+    try {
+      const username = req.params.username;
+
+      const user = await User.findOne({ username: username});
+
+      res.status(200).json({ result: user });
+    } catch (error) {
+      next(createError(404, 'User not found'));
+    }
+  }
+
   async postSignup(req, res, next) {
     try {
       validationResult(req).throw();

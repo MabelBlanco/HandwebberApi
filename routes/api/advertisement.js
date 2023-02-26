@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 const createError = require('http-errors');
 const router = express.Router();
 const upload = require('../../lib/uploadConfig');
-const { Advertisement } = require('../../models');
+const { Advertisement, User } = require('../../models');
 const path = require('path');
 const filesEraser = require('../../lib/filesEraser');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
@@ -113,10 +113,13 @@ router.post(
 
         image = path.join(destination, req.file?.filename);
       }
+      const user = await User.search({ _id : req.userId})
+      const username = user[0].username
       const newAdvertisement = new Advertisement({
         ...defaultValues,
         ...advertisement,
         idUser: req.userId,
+        username,
         image,
       });
 

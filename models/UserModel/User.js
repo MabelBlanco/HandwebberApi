@@ -3,6 +3,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const assingSearchParameters = require("./dataFilters");
+const nodemailer = require("nodemailer");
+const emailTransport = require("../../lib/emailTransportConfigure");
 
 //Esquema
 const userSchema = mongoose.Schema({
@@ -38,6 +40,21 @@ userSchema.statics.hashPassword = function (passwordEnClaro) {
 // Create an instance method for compare the password in DB with the login password
 userSchema.methods.comparePasswords = async function (loginPassword) {
   return await bcrypt.compare(loginPassword, this.password);
+};
+
+// Create an instance method for send email
+userSchema.methods.sendEmail = async function (subject, body) {
+  const transport = await emailTransport();
+
+  const result = await transport.sendMail({
+    from: process.env.EMAIL_SERVICE_FROM,
+    to: this.mail,
+    subject,
+    html: body,
+  });
+
+  console.log(nodemailer.getTestMessageUrl(result));
+  return result;
 };
 
 //Crear modelo

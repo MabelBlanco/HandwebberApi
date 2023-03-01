@@ -1,38 +1,39 @@
-'use strict';
+"use strict";
 
-const createError = require('http-errors');
-const { body, validationResult } = require('express-validator');
-const { User } = require('../../models');
-const path = require('path');
-const filesEraser = require('../../lib/filesEraser');
+const createError = require("http-errors");
+const { body, validationResult } = require("express-validator");
+const { User } = require("../../models");
+const path = require("path");
+const filesEraser = require("../../lib/filesEraser");
+const welcomeEmail = require("../emails/Welcome");
 
 class SignupController {
   validation() {
     return [
-      body('username')
+      body("username")
         .isAlphanumeric()
-        .withMessage('Username must be alphanumeric'),
-      body('mail').isEmail().withMessage('Insert a valid mail please'),
-      body('password')
+        .withMessage("Username must be alphanumeric"),
+      body("mail").isEmail().withMessage("Insert a valid mail please"),
+      body("password")
         .isLength({ min: 8 })
-        .withMessage('Password min length 8 characters'),
+        .withMessage("Password min length 8 characters"),
     ];
   }
 
   updateValidation() {
     return [
-      body('username')
-        .if(body('username').exists())
+      body("username")
+        .if(body("username").exists())
         .isAlphanumeric()
-        .withMessage('Username must be alphanumeric'),
-      body('mail')
-        .if(body('mail').exists())
+        .withMessage("Username must be alphanumeric"),
+      body("mail")
+        .if(body("mail").exists())
         .isEmail()
-        .withMessage('Insert a valid mail please'),
-      body('password')
-        .if(body('password').exists())
+        .withMessage("Insert a valid mail please"),
+      body("password")
+        .if(body("password").exists())
         .isLength({ min: 8 })
-        .withMessage('Password min length 8 characters'),
+        .withMessage("Password min length 8 characters"),
     ];
   }
 
@@ -45,7 +46,7 @@ class SignupController {
 
       res.status(200).json({ results: result });
     } catch (error) {
-      next(createError(400, 'ERROR in DB'));
+      next(createError(400, "ERROR in DB"));
     }
   }
 
@@ -57,7 +58,7 @@ class SignupController {
 
       res.status(200).json({ result: user });
     } catch (error) {
-      next(createError(404, 'User not found'));
+      next(createError(404, "User not found"));
     }
   }
 
@@ -85,7 +86,7 @@ class SignupController {
       //Añado los campos para la peticion
       let image = null;
       if (req.file) {
-        const destination = req.file?.destination.split('public')[1];
+        const destination = req.file?.destination.split("public")[1];
 
         image = path.join(destination, req.file?.filename);
       }
@@ -103,6 +104,12 @@ class SignupController {
 
       //La respuesta es el documento de usuario
       res.status(200).json({ result: userResult });
+
+      // Send a Welcome Email
+      await userResult.sendEmail(
+        "Welcome to HandWebber",
+        welcomeEmail(userResult.username)
+      );
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
@@ -137,16 +144,14 @@ class SignupController {
       return;
     }
 
-    
-
     try {
       const _id = req.params.id;
       const data = req.body;
 
       let image = null;
-      console.log(req.file)
+      console.log(req.file);
       if (req.file) {
-        const destination = req.file?.destination.split('public')[1];
+        const destination = req.file?.destination.split("public")[1];
 
         image = path.join(destination, req.file?.filename);
         data.image = image;
@@ -178,7 +183,7 @@ class SignupController {
       res.status(200).json({ result: updateUser });
     } catch (error) {
       if (!error.keyValue) {
-        next(createError(400, 'Bad Request'));
+        next(createError(400, "Bad Request"));
       } else {
         const notAvailable = error.keyValue; // Capturo el campo del error
         const key = Object.keys(notAvailable)[0];
@@ -205,7 +210,7 @@ class SignupController {
       };
       res.status(200).json({ result: response });
     } catch (error) {
-      next(createError(400, 'User not in DB'));
+      next(createError(400, "User not in DB"));
     }
   }
 }

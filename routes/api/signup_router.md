@@ -51,10 +51,72 @@ Filter by ID:
 <protocol>://<host>:<port>/api/users/<user_id>
 ```
 
+Response example:
+
+```json
+{
+	"result": {
+		"_id": "63fbb3d783e9ac81f5255810",
+		"username": "test",
+		"mail": "test@test.com",
+		"password": "$2b$07$7.JqYZpvZZK9Jf6tbzz8hOt6EssHfdqpVud8QYAsz5wH3COgFZ0se",
+		"image": "",
+		"subscriptions": [],
+		"creation": "2023-02-26T19:32:39.222Z",
+		"update": "2023-02-26T19:32:39.222Z",
+		"__v": 0
+	}
+}
+```
+
 Filter by username:
 
 ```
+<protocol>://<host>:<port>/api/users/user/<username>
+```
+
+Response example:
+
+```json
+{
+	"result": {
+		"_id": "63fbb3d783e9ac81f5255810",
+		"username": "test",
+		"mail": "test@test.com",
+		"password": "$2b$07$7.JqYZpvZZK9Jf6tbzz8hOt6EssHfdqpVud8QYAsz5wH3COgFZ0se",
+		"image": "",
+		"subscriptions": [],
+		"creation": "2023-02-26T19:32:39.222Z",
+		"update": "2023-02-26T19:32:39.222Z",
+		"__v": 0
+	}
+}
+```
+
+Or:
+
+```
 <protocol>://<host>:<port>/api/users/?username=<username>
+```
+
+Response example:
+
+```json
+{
+	"results": [
+		{
+			"_id": "63fbb3d783e9ac81f5255810",
+			"username": "test",
+			"mail": "test@test.com",
+			"password": "$2b$07$7.JqYZpvZZK9Jf6tbzz8hOt6EssHfdqpVud8QYAsz5wH3COgFZ0se",
+			"image": "",
+			"subscriptions": [],
+			"creation": "2023-02-26T19:32:39.222Z",
+			"update": "2023-02-26T19:32:39.222Z",
+			"__v": 0
+		}
+	]
+}
 ```
 
 Filter by mail:
@@ -62,6 +124,27 @@ Filter by mail:
 ```
 <protocol>://<host>:<port>/api/users/?mail=<mail>
 ```
+
+Response example:
+
+```json
+{
+	"results": [
+		{
+			"_id": "63fbb3d783e9ac81f5255810",
+			"username": "test",
+			"mail": "test@test.com",
+			"password": "$2b$07$7.JqYZpvZZK9Jf6tbzz8hOt6EssHfdqpVud8QYAsz5wH3COgFZ0se",
+			"image": "",
+			"subscriptions": [],
+			"creation": "2023-02-26T19:32:39.222Z",
+			"update": "2023-02-26T19:32:39.222Z",
+			"__v": 0
+		}
+	]
+}
+```
+
 ## POST method
 
 To register a new user in the database:
@@ -70,7 +153,7 @@ To register a new user in the database:
 <protocol>://<host>:<port>/api/users/signup
 ```
 
-You must attach in the request the body in format "**Form URL Encoded**" with the keys and values ​​of the following example:
+You must attach in the request the body in format "**Form Data**" with the keys and values ​​of the following example:
 
 ```json
 {
@@ -107,7 +190,7 @@ For user update:
 <protocol>://<host>:<port>/api/users/<user_id>
 ```
 
-You must attach in the request the body in format "**Form URL Encoded**" with the keys and values ​​to update:
+You must attach in the request the body in format "**Form Data**" with the keys and values ​​to update:
 
 Example for update username:
 

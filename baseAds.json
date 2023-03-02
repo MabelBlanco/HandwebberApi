@@ -8,7 +8,8 @@
       "price": 33.5,
       "stock": 4,
       "tags": ["testing"],
-      "idUser": "123testing"
+      "idUser": "123testing",
+      "username": "test"
     },
     {
       "active": true,
@@ -18,13 +19,14 @@
       "price": 150,
       "stock": 0,
       "tags": ["testing", "custom"],
-      "idUser": "123testing"
+      "idUser": "123testing",
+      "username": "test"
     }
   ],
   "users": [
     {
-      "username": "jossid",
-      "mail": "alfredvays@gmail.com",
+      "username": "test",
+      "mail": "test@test.com",
       "image": "",
       "subscriptions": []
     }

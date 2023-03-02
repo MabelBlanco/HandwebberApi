@@ -62,6 +62,18 @@ class SignupController {
     }
   }
 
+  async getUserByUsername(req, res, next) {
+    try {
+      const username = req.params.username;
+
+      const user = await User.findOne({ username: username });
+
+      res.status(200).json({ result: user });
+    } catch (error) {
+      next(createError(404, 'User not found'));
+    }
+  }
+
   async postSignup(req, res, next) {
     try {
       validationResult(req).throw();
@@ -119,9 +131,16 @@ class SignupController {
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
-      const value = Object.values(notAvailable)[0];
 
-      const message = `The ${key} ${value} is not available`;
+      let message;
+
+      if (key === 'username') {
+        message = 'This username is not available';
+      }
+
+      if (key === 'mail') {
+        message = 'This email is already registered';
+      }
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
@@ -193,9 +212,16 @@ class SignupController {
       } else {
         const notAvailable = error.keyValue; // Capturo el campo del error
         const key = Object.keys(notAvailable)[0];
-        const value = Object.values(notAvailable)[0];
 
-        const message = `The ${key} ${value} is not available`;
+        let message;
+
+        if (key === 'username') {
+          message = 'This username is not available';
+        }
+
+        if (key === 'mail') {
+          message = 'This email is already registered';
+        }
 
         next(createError(409, message));
       }

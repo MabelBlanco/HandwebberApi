@@ -15,6 +15,8 @@ router.get("/", signupController.getAllUsers);
 /*GET user by id */
 router.get("/:id", signupController.getUserById);
 
+router.get("/user/:username", signupController.getUserByUsername);
+
 /* POST signup user */
 router.post(
   "/signup",

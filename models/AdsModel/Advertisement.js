@@ -17,6 +17,7 @@ const adSchema = mongoose.Schema({
   idUser: { type: String, required: true },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
+  username: { type: String, required: true },
 });
 
 //DB indexes
@@ -27,6 +28,7 @@ adSchema.index({ price: -1 });
 adSchema.index({ tags: 1 });
 adSchema.index({ tags: -1 });
 adSchema.index({ update: 1 });
+adSchema.index({ username: 1})
 
 /**
  *

@@ -6,6 +6,7 @@ const { User } = require("../../models");
 const path = require("path");
 const filesEraser = require("../../lib/filesEraser");
 const welcomeEmail = require("../emails/Welcome");
+const publisher = require("../../lib/rabbitmq/publisher");
 
 class SignupController {
   validation() {
@@ -106,10 +107,16 @@ class SignupController {
       res.status(200).json({ result: userResult });
 
       // Send a Welcome Email
-      await userResult.sendEmail(
-        "Welcome to HandWebber",
-        welcomeEmail(userResult.username)
-      );
+      const messageConfig = {
+        function: "sendEmail",
+        email: "welcomeEmail",
+        user: userResult,
+      };
+      publisher(messageConfig);
+      //         userResult.sendEmail(
+      //  "Welcome to HandWebber",
+      //  welcomeEmail(userResult.username)
+      //)
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];

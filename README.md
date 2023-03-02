@@ -64,3 +64,76 @@ Also you can apply filters in the query params:
 You can sort the response list, using the `sort` query param, providing the field to sort:  
 `.../api/advertisement?sort=price`  
 Introducing '-' before the field name, will sort in reverse mode.
+
+## SEND EMAILS
+
+We have a worker called "consumer". He only send emails and notification, like a microservice.
+
+So, if we want to send an email, we must to download and install the consumer:
+1- Go to folder "consumer".
+
+2-
+
+```
+npm i
+
+```
+
+After, we must to publisher a message with the properties that we will need for send the email.
+
+Steps:
+
+1- Import the publisher
+
+```
+
+const publisher = require("../../lib/rabbitmq/publisher");
+
+```
+
+2- Create an object with properties that you will need.
+Property **function** indicates if we want to send an email (sendEmail) or send a notification (sendNotification).
+Property **email** indicates what email you want to send.
+
+```
+
+      const messageConfig = {
+        function: "sendEmail",
+        email: "welcomeEmail",
+        user: userResult,
+      };
+
+```
+
+3- At last, send the object with publisher.
+
+```
+
+publisher(messageConfig);
+
+```
+
+### Create new email
+
+For create a new email:
+
+1- Go to folder "consumer".
+2- Create a function that returns an html or template. In the function, put as parameters the variables that you will need in the email. Save this at "emails".
+3- Open "consumer.js" and import the email
+
+```
+
+const welcomeEmail = require("./emails/Welcome");
+
+```
+
+4- At consumer function, add the new email. The properties will come to you in an object called payload.
+5- Use the function **sendEmail**. The first parameter is the recipient (to), the second the subject and the third the body of the email (the function that we have previously created as email).
+
+```
+sendEmail(
+            user.mail,
+            "Welcome to Handwebber",
+            welcomeEmail(user.username)
+          );
+```

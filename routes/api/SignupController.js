@@ -5,7 +5,6 @@ const { body, validationResult } = require("express-validator");
 const { User } = require("../../models");
 const path = require("path");
 const filesEraser = require("../../lib/filesEraser");
-const welcomeEmail = require("../emails/Welcome");
 const publisher = require("../../lib/rabbitmq/publisher");
 
 class SignupController {

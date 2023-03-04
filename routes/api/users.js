@@ -1,11 +1,11 @@
 "use strict";
 
 const express = require("express");
-const router = express.Router();  
-const upload = require('../../lib/uploadConfig');
+const router = express.Router();
+const upload = require("../../lib/uploadConfig");
 const SignupController = require("./SignupController");
 const loginRouter = require("./login");
-const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
+const jwtAuthMiddleware = require("../../lib/jwtAuthMiddleware");
 
 const signupController = new SignupController();
 
@@ -20,7 +20,7 @@ router.get("/user/:username", signupController.getUserByUsername);
 /* POST signup user */
 router.post(
   "/signup",
-  upload.single('image'),
+  upload.single("image"),
   signupController.validation(),
   signupController.postSignup
 );
@@ -29,15 +29,18 @@ router.post(
 router.put(
   "/:id",
   jwtAuthMiddleware,
-  upload.single('image'),
+  upload.single("image"),
   signupController.updateValidation(),
   signupController.updateUser
 );
 
 /* DELETE user by ID */
-router.delete("/:id", jwtAuthMiddleware,signupController.deleteUser);
+router.delete("/:id", jwtAuthMiddleware, signupController.deleteUser);
 
 /* LOGIN user*/
 router.use("/login", loginRouter);
+
+/* Recover Password */
+router.put("/recover-password/:mail", signupController.recoverPassword);
 
 module.exports = router;

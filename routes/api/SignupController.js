@@ -6,6 +6,7 @@ const { User } = require("../../models");
 const path = require("path");
 const filesEraser = require("../../lib/filesEraser");
 const publisher = require("../../lib/rabbitmq/publisher");
+const generator = require("generate-password");
 
 class SignupController {
   validation() {
@@ -70,7 +71,7 @@ class SignupController {
 
       res.status(200).json({ result: user });
     } catch (error) {
-      next(createError(404, 'User not found'));
+      next(createError(404, "User not found"));
     }
   }
 
@@ -134,12 +135,12 @@ class SignupController {
 
       let message;
 
-      if (key === 'username') {
-        message = 'This username is not available';
+      if (key === "username") {
+        message = "This username is not available";
       }
 
-      if (key === 'mail') {
-        message = 'This email is already registered';
+      if (key === "mail") {
+        message = "This email is already registered";
       }
 
       //If there's a validation error, we'll erase the file uploaded
@@ -215,16 +216,52 @@ class SignupController {
 
         let message;
 
-        if (key === 'username') {
-          message = 'This username is not available';
+        if (key === "username") {
+          message = "This username is not available";
         }
 
-        if (key === 'mail') {
-          message = 'This email is already registered';
+        if (key === "mail") {
+          message = "This email is already registered";
         }
 
         next(createError(409, message));
       }
+    }
+  }
+
+  async recoverPassword(req, res, next) {
+    try {
+      const mail = req.params.mail;
+      const user = await User.findOne({ mail });
+      if (!user) {
+        next(createError(409, "This email do not have an account"));
+      }
+      const newPassword = generator.generate({
+        length: 10,
+        numbers: true,
+        lowercase: true,
+        uppercase: true,
+      });
+
+      const newHashPassword = User.hashPassword(newPassword);
+      user.password = newHashPassword;
+
+      const updateUser = await User.findOneAndUpdate({ _id: user._id }, user, {
+        new: true,
+      });
+
+      // Send email with password
+      const messageConfig = {
+        function: "sendEmail",
+        email: "recoverPasswordEmail",
+        user: user,
+        pass: newPassword,
+      };
+      publisher(messageConfig);
+
+      res.status(200).json({ result: updateUser });
+    } catch (error) {
+      next(createError(400, "Bad Request"));
     }
   }
 

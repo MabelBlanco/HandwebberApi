@@ -130,10 +130,11 @@ const welcomeEmail = require("./emails/Welcome");
 4- At consumer function, add the new email. The properties will come to you in an object called payload.
 5- Use the function **sendEmail**. The first parameter is the recipient (to), the second the subject and the third the body of the email (the function that we have previously created as email).
 
-```
+````
 sendEmail(
             user.mail,
             "Welcome to Handwebber",
             welcomeEmail(user.username)
           );
-```
+```recoverPasswordEmail
+````

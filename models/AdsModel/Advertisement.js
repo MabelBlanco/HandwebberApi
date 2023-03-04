@@ -1,6 +1,5 @@
 'use strict';
 const User = require('../UserModel/User');
-console.log(User.modelName);
 
 const mongoose = require('mongoose');
 const dataValidator = require('./dataValidator');
@@ -50,6 +49,7 @@ adSchema.statics.search = function (filters, skip, limit, sort, fields) {
   query.limit(limit);
   query.sort(sort);
   query.select(fields);
+  query.populate('idUser', 'username');
 
   return query.exec();
 };

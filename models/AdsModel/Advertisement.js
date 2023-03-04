@@ -1,4 +1,6 @@
 'use strict';
+const User = require('../UserModel/User');
+console.log(User.modelName);
 
 const mongoose = require('mongoose');
 const dataValidator = require('./dataValidator');
@@ -14,7 +16,11 @@ const adSchema = mongoose.Schema({
   price: { type: Number, required: true },
   stock: { type: Number, default: 0 },
   tags: { type: Array, required: true },
-  idUser: { type: String, required: true },
+  idUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: User.modelName,
+    required: true,
+  },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
 });

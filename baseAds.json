@@ -8,7 +8,7 @@
       "price": 33.5,
       "stock": 4,
       "tags": ["testing"],
-      "idUser": "123testing"
+      "idUser": "63efcae39f20ef6b4637a15f"
     },
     {
       "active": true,
@@ -18,13 +18,23 @@
       "price": 150,
       "stock": 0,
       "tags": ["testing", "custom"],
-      "idUser": "123testing"
+      "idUser": "63eff532490c9510cdf36764"
     }
   ],
   "users": [
     {
+      "_id": "63efcae39f20ef6b4637a15f",
       "username": "jossid",
-      "mail": "alfredvays@gmail.com",
+      "mail": "alfred@alfred.com",
+      "password": "$2b$07$3qnwZvSrfTyDZ22VmCCz6OLk4I9cAZp5OL1tiYHArElEsGNxjLNb6",
+      "image": "",
+      "subscriptions": []
+    },
+    {
+      "_id": "63eff532490c9510cdf36764",
+      "username": "ivan",
+      "mail": "ivan@ivan.com",
+      "password": "$2b$07$9A2ZD14kzeux14X65YgMG.BJiTvZrrto5KKBZxa0FkAmR5FYe/KHa",
       "image": "",
       "subscriptions": []
     }

@@ -28,10 +28,21 @@ router.get(
 
     //Extracting the data for search
     let searchParameters = Advertisement.assingSearchParameters(req);
+    console.log('filtros', searchParameters.filters);
+    let { idUser, ...filters } = searchParameters.filters;
+    if (idUser) {
+      const idUserProperty = 'idUser._id';
+      filters = {
+        ...filters,
+        [idUserProperty]: idUser,
+      };
+    }
+    console.log('filtros tratados', filters);
 
     try {
       const ads = await Advertisement.search(
-        searchParameters.filters,
+        //        searchParameters.filters,
+        filters,
         searchParameters.skip,
         searchParameters.limit,
         searchParameters.sort,

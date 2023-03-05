@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 const createError = require('http-errors');
 const router = express.Router();
 const upload = require('../../lib/uploadConfig');
-const { Advertisement } = require('../../models');
+const { Advertisement, User } = require('../../models');
 const path = require('path');
 const filesEraser = require('../../lib/filesEraser');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
@@ -113,10 +113,13 @@ router.post(
 
         image = path.join(destination, req.file?.filename);
       }
+      //      const user = await User.search({ _id: req.userId });
+      //      const username = user[0].username;
       const newAdvertisement = new Advertisement({
         ...defaultValues,
         ...advertisement,
         idUser: req.userId,
+        //        username,
         image,
       });
 
@@ -138,7 +141,7 @@ router.post(
   }
 );
 
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id', jwtAuthMiddleware, async function (req, res, next) {
   try {
     const id = req.params.id;
     const ad = await Advertisement.search({ _id: id });
@@ -149,5 +152,68 @@ router.delete('/:id', async function (req, res, next) {
     next(createError(400, 'Advertisement not in DB'));
   }
 });
+
+// Actualizar un anuncio
+// PUT => localhost:3001/api/advertisement/_id
+router.put(
+  '/:id',
+  jwtAuthMiddleware,
+  upload.single('image'),
+  Advertisement.dataValidator('put'),
+  async (req, res, next) => {
+    try {
+      validationResult(req).throw();
+    } catch (error) {
+      const err = {
+        status: 422,
+        message: error.array(),
+      };
+
+      //If there's a validation error, we'll erase the file uploaded
+      if (req.file) {
+        filesEraser(req.file);
+      }
+
+      next(err);
+      return;
+    }
+
+    try {
+      const _id = req.params.id;
+      const data = req.body;
+
+      let image = req.file;
+
+      if (req.file) {
+        const destination = req.file?.destination.split('public')[1];
+        image = path.join(destination, req.file?.filename);
+      }
+      data.price = parseFloat(data.price);
+
+      //TODO Erase de old image file, to evite garbage in the server
+      const updatedAdvertisement = await Advertisement.findOneAndUpdate(
+        { _id: _id },
+        {
+          ...data,
+          image,
+          update: Date.now(),
+        },
+        {
+          new: true, // esto hace que nos devuelva el documento actualizado
+        }
+      );
+
+      res.json({ result: updatedAdvertisement });
+      //createThumbnail(data.image);
+    } catch (error) {
+      //TODO
+      //TODO
+      console.log('Estoy en el segundo error');
+      console.log(error);
+      res.json({ error: error });
+      next(error);
+    }
+  }
+);
 
 module.exports = router;

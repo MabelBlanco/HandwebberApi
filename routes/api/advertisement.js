@@ -9,6 +9,7 @@ const { Advertisement, User } = require('../../models');
 const path = require('path');
 const filesEraser = require('../../lib/filesEraser');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
+const authUserActionsMiddleware = require('../../lib/authUserActionsMiddleware');
 
 router.get(
   '/',
@@ -141,17 +142,22 @@ router.post(
   }
 );
 
-router.delete('/:id', jwtAuthMiddleware, async function (req, res, next) {
-  try {
-    const id = req.params.id;
-    const ad = await Advertisement.search({ _id: id });
-    const deletedAd = await Advertisement.deleteOne({ _id: id });
-    const response = { deletedAd, ad };
-    res.status(200).json({ result: response });
-  } catch (error) {
-    next(createError(400, 'Advertisement not in DB'));
+router.delete(
+  '/:id',
+  jwtAuthMiddleware,
+  authUserActionsMiddleware,
+  async function (req, res, next) {
+    try {
+      const id = req.params.id;
+      const ad = await Advertisement.search({ _id: id });
+      const deletedAd = await Advertisement.deleteOne({ _id: id });
+      const response = { deletedAd, ad };
+      res.status(200).json({ result: response });
+    } catch (error) {
+      next(createError(400, 'Advertisement not in DB'));
+    }
   }
-});
+);
 
 // Actualizar un anuncio
 // PUT => localhost:3001/api/advertisement/_id
@@ -159,6 +165,7 @@ router.put(
   '/:id',
   jwtAuthMiddleware,
   upload.single('image'),
+  authUserActionsMiddleware,
   Advertisement.dataValidator('put'),
   async (req, res, next) => {
     try {
@@ -173,7 +180,6 @@ router.put(
       if (req.file) {
         filesEraser(req.file);
       }
-
       next(err);
       return;
     }
@@ -202,16 +208,10 @@ router.put(
           new: true, // esto hace que nos devuelva el documento actualizado
         }
       );
-
       res.json({ result: updatedAdvertisement });
       //createThumbnail(data.image);
     } catch (error) {
-      //TODO
-      //TODO
-      console.log('Estoy en el segundo error');
-      console.log(error);
-      res.json({ error: error });
-      next(error);
+      next(createError(error));
     }
   }
 );

@@ -97,6 +97,10 @@ module.exports = function adDataValidator(method) {
         .withMessage(
           `tags must be an array of strings containing one tag at least`
         ),
+      body('stock')
+        .if(body('stock').exists())
+        .isString()
+        .withMessage('idUser must be a string'),
     ];
   }
 };

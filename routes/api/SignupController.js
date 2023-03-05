@@ -243,12 +243,18 @@ class SignupController {
         uppercase: true,
       });
 
-      const newHashPassword = User.hashPassword(newPassword);
-      user.password = newHashPassword;
+      const newHashPassword = await User.hashPassword(newPassword);
 
-      const updateUser = await User.findOneAndUpdate({ _id: user._id }, user, {
-        new: true,
-      });
+      const updateUser = await User.findOneAndUpdate(
+        { _id: user._id },
+        { password: newHashPassword },
+        {
+          new: true,
+        }
+      );
+
+      console.log(updateUser);
+      console.log(user);
 
       // Send email with password
       const messageConfig = {

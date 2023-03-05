@@ -130,8 +130,6 @@ router.post(
         image,
       });
 
-      console.log('nuevo anuncio:', newAdvertisement);
-
       //Hago la peticion
       const advertisementResult = await newAdvertisement.save();
 

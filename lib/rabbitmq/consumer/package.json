@@ -4,7 +4,7 @@
   "description": "",
   "main": "connectAMQP.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development RABBITMQ_URL=amqps://gzdzbtob:yF8vGYww1BUX49-R4-Cv2ma8KnK6KWgH@rat.rmq2.cloudamqp.com/gzdzbtob node consumer.js",
+    "dev": "cross-env NODE_ENV=development node consumer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

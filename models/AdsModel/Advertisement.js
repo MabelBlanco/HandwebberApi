@@ -18,6 +18,8 @@ const adSchema = mongoose.Schema({
   idUser: {
     _id: { type: String, required: true },
     username: { type: String, required: true },
+    mail: { type: String, required: true },
+    image: { type: String, required: true },
   },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
@@ -31,6 +33,9 @@ adSchema.index({ price: -1 });
 adSchema.index({ tags: 1 });
 adSchema.index({ tags: -1 });
 adSchema.index({ update: 1 });
+const idUserProperty = 'idUser._id';
+adSchema.index({ [idUserProperty]: 1 });
+adSchema.index({ [idUserProperty]: -1 });
 
 /**
  *

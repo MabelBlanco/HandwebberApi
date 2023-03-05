@@ -119,6 +119,8 @@ router.post(
       const idUser = {
         _id: req.userId,
         username: user[0].username,
+        mail: user[0].mail,
+        image: user[0].image,
       };
 
       const newAdvertisement = new Advertisement({

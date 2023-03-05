@@ -114,18 +114,23 @@ router.post(
 
         image = path.join(destination, req.file?.filename);
       }
-      //      const user = await User.search({ _id: req.userId });
-      //      const username = user[0].username;
+      const user = await User.search({ _id: req.userId });
+
+      const idUser = {
+        _id: req.userId,
+        username: user[0].username,
+      };
+
       const newAdvertisement = new Advertisement({
         ...defaultValues,
         ...advertisement,
-        idUser: req.userId,
-        //        username,
+        idUser,
         image,
       });
 
+      console.log('nuevo anuncio:', newAdvertisement);
+
       //Hago la peticion
-      //const advertisementResult = await Advertisement.create(newAdvertisement);
       const advertisementResult = await newAdvertisement.save();
 
       //La respuesta es el documento de usuario

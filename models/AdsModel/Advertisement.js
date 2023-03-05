@@ -16,9 +16,8 @@ const adSchema = mongoose.Schema({
   stock: { type: Number, default: 0 },
   tags: { type: Array, required: true },
   idUser: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: User.modelName,
-    required: true,
+    _id: { type: String, required: true },
+    username: { type: String, required: true },
   },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
@@ -49,7 +48,6 @@ adSchema.statics.search = function (filters, skip, limit, sort, fields) {
   query.limit(limit);
   query.sort(sort);
   query.select(fields);
-  query.populate('idUser', 'username');
 
   return query.exec();
 };

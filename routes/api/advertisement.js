@@ -147,22 +147,25 @@ router.post(
   }
 );
 
-router.delete(
-  '/:id',
-  jwtAuthMiddleware,
-  authUserActionsMiddleware,
-  async function (req, res, next) {
-    try {
-      const id = req.params.id;
-      const ad = await Advertisement.search({ _id: id });
-      const deletedAd = await Advertisement.deleteOne({ _id: id });
-      const response = { deletedAd, ad };
-      res.status(200).json({ result: response });
-    } catch (error) {
-      next(createError(400, 'Advertisement not in DB'));
+router.delete('/:id', jwtAuthMiddleware, async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const ad = await Advertisement.search({ _id: id });
+    if (req.userId !== ad[0].idUser._id) {
+      throw createError(401, 'This ad is not your property');
     }
+    const deletedAd = await Advertisement.deleteOne({ _id: id });
+    const response = { deletedAd, ad };
+    res.status(200).json({ result: response });
+  } catch (error) {
+    if (error.status === 401) {
+      next(error);
+      return;
+    }
+    console.log(error);
+    next(createError(400, 'Advertisement not in DB'));
   }
-);
+});
 
 // Actualizar un anuncio
 // PUT => localhost:3001/api/advertisement/_id

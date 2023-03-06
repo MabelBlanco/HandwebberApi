@@ -7,9 +7,13 @@ const router = express.Router();
 const upload = require('../../lib/uploadConfig');
 const { Advertisement, User } = require('../../models');
 const path = require('path');
-const filesEraser = require('../../lib/filesEraser');
+const {
+  filesEraserFromReq,
+  filesEraserFromName,
+} = require('../../lib/filesEraser');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
 const authUserActionsMiddleware = require('../../lib/authUserActionsMiddleware');
+const fs = require('fs');
 
 router.get(
   '/',
@@ -92,7 +96,7 @@ router.post(
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(err);
@@ -138,7 +142,7 @@ router.post(
     } catch (error) {
       //Si falla la creación, elimino el archivo
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
       next(
         createError(500, 'Internal Error: Impossible create the advertisement')
@@ -156,6 +160,7 @@ router.delete('/:id', jwtAuthMiddleware, async function (req, res, next) {
     }
     const deletedAd = await Advertisement.deleteOne({ _id: id });
     const response = { deletedAd, ad };
+    filesEraserFromName(ad[0].image);
     res.status(200).json({ result: response });
   } catch (error) {
     if (error.status === 401) {
@@ -186,7 +191,7 @@ router.put(
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
       next(err);
       return;
@@ -200,16 +205,20 @@ router.put(
 
       if (req.file) {
         const destination = req.file?.destination.split('public')[1];
-        image = path.join(destination, req.file?.filename);
+        newImage = path.join(destination, req.file?.filename);
       }
       data.price = parseFloat(data.price);
 
       //TODO Erase de old image file, to evite garbage in the server
+      const adToErase = await Advertisement.search({ _id: _id });
+      let imageToErase = adToErase[0].image;
+      filesEraserFromName(imageToErase);
+
       const updatedAdvertisement = await Advertisement.findOneAndUpdate(
         { _id: _id },
         {
           ...data,
-          image,
+          newImage,
           update: Date.now(),
         },
         {

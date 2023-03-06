@@ -252,10 +252,6 @@ class SignupController {
           new: true,
         }
       );
-
-      console.log(updateUser);
-      console.log(user);
-
       // Send email with password
       const messageConfig = {
         function: "sendEmail",

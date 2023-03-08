@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const assingSearchParameters = require("./dataFilters");
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const assingSearchParameters = require('./dataFilters');
 
 //Esquema
 const userSchema = mongoose.Schema({
@@ -41,7 +41,7 @@ userSchema.methods.comparePasswords = async function (loginPassword) {
 };
 
 //Crear modelo
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 //Exportar modelo
 module.exports = User;

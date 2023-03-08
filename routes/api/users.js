@@ -1,23 +1,26 @@
-"use strict";
+'use strict';
 
-const express = require("express");
-const router = express.Router();  
+const express = require('express');
+const router = express.Router();
 const upload = require('../../lib/uploadConfig');
-const SignupController = require("./SignupController");
-const loginRouter = require("./login");
+const SignupController = require('./SignupController');
+const loginRouter = require('./login');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
 
 const signupController = new SignupController();
 
 /* GET users listing. */
-router.get("/", signupController.getAllUsers);
+router.get('/', signupController.getAllUsers);
 
 /*GET user by id */
-router.get("/:id", signupController.getUserById);
+router.get('/:id', signupController.getPublicUserInfoById);
+
+/*GET user by id */
+router.get('/private/:id', signupController.getUserById);
 
 /* POST signup user */
 router.post(
-  "/signup",
+  '/signup',
   upload.single('image'),
   signupController.validation(),
   signupController.postSignup
@@ -25,7 +28,7 @@ router.post(
 
 /* PUT update user by ID */
 router.put(
-  "/:id",
+  '/:id',
   jwtAuthMiddleware,
   upload.single('image'),
   signupController.updateValidation(),
@@ -33,9 +36,9 @@ router.put(
 );
 
 /* DELETE user by ID */
-router.delete("/:id", jwtAuthMiddleware,signupController.deleteUser);
+router.delete('/:id', jwtAuthMiddleware, signupController.deleteUser);
 
 /* LOGIN user*/
-router.use("/login", loginRouter);
+router.use('/login', loginRouter);
 
 module.exports = router;

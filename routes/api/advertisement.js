@@ -199,7 +199,7 @@ router.put(
 
     try {
       const _id = req.params.id;
-      const data = req.body;
+      const { idUser, ...data } = req.body;
 
       let image = req.file;
       let newImage;
@@ -226,6 +226,7 @@ router.put(
         newData.image = newImage;
       }
 
+      console.log('id: ', _id, 'nuevos datos', newData);
       const updatedAdvertisement = await Advertisement.findOneAndUpdate(
         { _id: _id },
         newData,
@@ -233,6 +234,7 @@ router.put(
           new: true, // esto hace que nos devuelva el documento actualizado
         }
       );
+      console.log('resultado', updatedAdvertisement);
       res.json({ result: updatedAdvertisement });
       //createThumbnail(data.image);
     } catch (error) {

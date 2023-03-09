@@ -24,7 +24,15 @@ var server = http.createServer(app);
 
 // Create a new Server from Socket.io
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("user connected with id ", socket.id);
+});
 // Export the server Socket.io
 module.exports.serverio = io;
 

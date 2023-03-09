@@ -202,25 +202,33 @@ router.put(
       const data = req.body;
 
       let image = req.file;
+      let newImage;
 
       if (req.file) {
+        //TODO
+        console.log('Estoy dentro');
         const destination = req.file?.destination.split('public')[1];
         newImage = path.join(destination, req.file?.filename);
       }
       data.price = parseFloat(data.price);
 
-      //TODO Erase de old image file, to evite garbage in the server
-      const adToErase = await Advertisement.search({ _id: _id });
-      let imageToErase = adToErase[0].image;
-      filesEraserFromName(imageToErase);
+      if (image) {
+        const adToErase = await Advertisement.search({ _id: _id });
+        let imageToErase = adToErase[0].image;
+        filesEraserFromName(imageToErase);
+      }
+
+      let newData = {
+        ...data,
+        update: Date.now(),
+      };
+      if (newImage) {
+        newData.image = newImage;
+      }
 
       const updatedAdvertisement = await Advertisement.findOneAndUpdate(
         { _id: _id },
-        {
-          ...data,
-          newImage,
-          update: Date.now(),
-        },
+        newData,
         {
           new: true, // esto hace que nos devuelva el documento actualizado
         }

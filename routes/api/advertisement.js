@@ -205,8 +205,6 @@ router.put(
       let newImage;
 
       if (req.file) {
-        //TODO
-        console.log('Estoy dentro');
         const destination = req.file?.destination.split('public')[1];
         newImage = path.join(destination, req.file?.filename);
       }
@@ -226,7 +224,6 @@ router.put(
         newData.image = newImage;
       }
 
-      console.log('id: ', _id, 'nuevos datos', newData);
       const updatedAdvertisement = await Advertisement.findOneAndUpdate(
         { _id: _id },
         newData,
@@ -234,7 +231,6 @@ router.put(
           new: true, // esto hace que nos devuelva el documento actualizado
         }
       );
-      console.log('resultado', updatedAdvertisement);
       res.json({ result: updatedAdvertisement });
       //createThumbnail(data.image);
     } catch (error) {

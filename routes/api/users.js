@@ -16,6 +16,7 @@ router.get('/', signupController.getAllUsers);
 router.get('/:id', signupController.getPublicUserInfoById);
 
 /*GET user by id */
+//TODO Proteger la salida de datos privados el usuario sólo si es él
 router.get('/private/:id', signupController.getUserById);
 
 /* POST signup user */

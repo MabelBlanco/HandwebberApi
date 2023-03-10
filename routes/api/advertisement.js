@@ -103,9 +103,6 @@ router.post(
       return;
     }
 
-    //TODO
-    console.log(req.body);
-
     try {
       const advertisement = req.body;
       advertisement.price = parseFloat(advertisement.price);
@@ -128,15 +125,14 @@ router.post(
         username: user[0].username,
       };
 
+      advertisement.tags = advertisement.tags.split(',');
+
       const newAdvertisement = new Advertisement({
         ...defaultValues,
         ...advertisement,
         idUser,
         image,
       });
-
-      //TODO
-      console.log('anuncio a guardar', newAdvertisement);
 
       //Hago la peticion
       const advertisementResult = await newAdvertisement.save();

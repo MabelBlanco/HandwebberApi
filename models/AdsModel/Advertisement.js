@@ -9,7 +9,7 @@ const assingSearchParameters = require('./dataFilters');
 const adSchema = mongoose.Schema({
   active: { type: Boolean, required: true, default: true },
   name: { type: String, required: true },
-  image: { type: String },
+  image: { type: String, required: false },
   description: { type: String, required: true },
   custom: { type: Boolean, required: true, default: false },
   price: { type: Number, required: true },
@@ -18,8 +18,6 @@ const adSchema = mongoose.Schema({
   idUser: {
     _id: { type: String, required: true },
     username: { type: String, required: true },
-    mail: { type: String, required: true },
-    image: { type: String, required: true },
   },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },

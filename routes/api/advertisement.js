@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const { validationResult } = require('express-validator');
-const createError = require('http-errors');
+const express = require("express");
+const { validationResult } = require("express-validator");
+const createError = require("http-errors");
 const router = express.Router();
-const upload = require('../../lib/uploadConfig');
-const { Advertisement, User } = require('../../models');
-const path = require('path');
-const filesEraser = require('../../lib/filesEraser');
-const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
+const upload = require("../../lib/uploadConfig");
+const { Advertisement, User } = require("../../models");
+const path = require("path");
+const filesEraser = require("../../lib/filesEraser");
+const jwtAuthMiddleware = require("../../lib/jwtAuthMiddleware");
 
 router.get(
-  '/',
-  Advertisement.dataValidator('get'),
+  "/",
+  Advertisement.dataValidator("get"),
   async function (req, res, next) {
     try {
       validationResult(req).throw();
@@ -50,14 +50,14 @@ router.get(
 
       res.status(200).json(response);
     } catch (error) {
-      next(createError(500, 'Advertisements are not available in this moment'));
+      next(createError(500, "Advertisements are not available in this moment"));
     }
   }
 );
 
 router.get(
-  '/:id',
-  Advertisement.dataValidator('get'),
+  "/:id",
+  Advertisement.dataValidator("get"),
   async function (req, res, next) {
     try {
       const _id = req.params.id;
@@ -76,10 +76,10 @@ router.get(
 );
 
 router.post(
-  '/',
+  "/",
   jwtAuthMiddleware,
-  upload.single('image'),
-  Advertisement.dataValidator('post'),
+  upload.single("image"),
+  Advertisement.dataValidator("post"),
   async function (req, res, next) {
     try {
       validationResult(req).throw();
@@ -109,12 +109,12 @@ router.post(
 
       let image = null;
       if (req.file) {
-        const destination = req.file?.destination.split('public')[1];
+        const destination = req.file?.destination.split("public")[1];
 
         image = path.join(destination, req.file?.filename);
       }
-      const user = await User.search({ _id : req.userId})
-      const username = user[0].username
+      const user = await User.search({ _id: req.userId });
+      const username = user[0].username;
       const newAdvertisement = new Advertisement({
         ...defaultValues,
         ...advertisement,
@@ -135,13 +135,13 @@ router.post(
         filesEraser(req.file);
       }
       next(
-        createError(500, 'Internal Error: Impossible create the advertisement')
+        createError(500, "Internal Error: Impossible create the advertisement")
       );
     }
   }
 );
 
-router.delete('/:id', async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) {
   try {
     const id = req.params.id;
     const ad = await Advertisement.search({ _id: id });
@@ -149,7 +149,7 @@ router.delete('/:id', async function (req, res, next) {
     const response = { deletedAd, ad };
     res.status(200).json({ result: response });
   } catch (error) {
-    next(createError(400, 'Advertisement not in DB'));
+    next(createError(400, "Advertisement not in DB"));
   }
 });
 

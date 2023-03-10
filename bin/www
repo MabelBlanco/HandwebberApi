@@ -8,6 +8,7 @@ require("dotenv").config();
 var app = require("../app");
 var debug = require("debug")("handwebber:server");
 var http = require("http");
+const websocketServer = require("../lib/websocket/websocketServer");
 
 /**
  * Get port from environment and store in Express.
@@ -23,18 +24,7 @@ app.set("port", port);
 var server = http.createServer(app);
 
 // Create a new Server from Socket.io
-const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
-});
-
-io.on("connection", (socket) => {
-  console.log("user connected with id ", socket.id);
-});
-// Export the server Socket.io
-module.exports.serverio = io;
+websocketServer(server);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -99,6 +89,3 @@ function onListening() {
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
-
-//Export server for testing
-module.exports.server = server;

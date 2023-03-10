@@ -200,6 +200,7 @@ router.put(
     try {
       const _id = req.params.id;
       const { idUser, ...data } = req.body;
+      console.log('datos recibidos', data);
 
       let image = req.file;
       let newImage;
@@ -216,10 +217,13 @@ router.put(
         filesEraserFromName(imageToErase);
       }
 
+      data.tags = data.tags.split(',');
+
       let newData = {
         ...data,
         update: Date.now(),
       };
+      console.log('datos nuevos', newData);
       if (newImage) {
         newData.image = newImage;
       }

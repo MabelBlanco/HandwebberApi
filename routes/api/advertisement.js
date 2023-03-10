@@ -9,6 +9,8 @@ const { Advertisement, User } = require("../../models");
 const path = require("path");
 const filesEraser = require("../../lib/filesEraser");
 const jwtAuthMiddleware = require("../../lib/jwtAuthMiddleware");
+const eventEmitter = require("../../lib/eventEmitter").eventEmitter;
+const events = require("../../lib/eventEmitter").Events;
 
 router.get(
   "/",
@@ -47,6 +49,11 @@ router.get(
           maxPrice,
         },
       };
+
+      //Prueba de emisión de evento para socket.io
+      eventEmitter.emit(events.HELLO_WORLD, {
+        data: response.meta.totalNumOfAds,
+      });
 
       res.status(200).json(response);
     } catch (error) {

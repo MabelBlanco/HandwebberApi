@@ -4,7 +4,7 @@ const createError = require('http-errors');
 const { body, validationResult } = require('express-validator');
 const { User } = require('../../models');
 const path = require('path');
-const filesEraser = require('../../lib/filesEraser');
+const { filesEraserFromReq, filesEraserFromName } = require('../../lib/filesEraser');
 
 class SignupController {
   validation() {
@@ -85,7 +85,7 @@ class SignupController {
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(err);
@@ -119,13 +119,20 @@ class SignupController {
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
-      const value = Object.values(notAvailable)[0];
+     
+      let message;
 
-      const message = `The ${key} ${value} is not available`;
+      if (key === "username") {
+        message = "This username is not available";
+      }
+
+      if (key === "mail") {
+        message = "This email is already registered";
+      }
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(createError(409, message));
@@ -143,7 +150,7 @@ class SignupController {
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(err);
@@ -193,9 +200,20 @@ class SignupController {
       } else {
         const notAvailable = error.keyValue; // Capturo el campo del error
         const key = Object.keys(notAvailable)[0];
-        const value = Object.values(notAvailable)[0];
+        
+        let message;
 
-        const message = `The ${key} ${value} is not available`;
+        if (key === "username") {
+          message = "This username is not available";
+        }
+  
+        if (key === "mail") {
+          message = "This email is already registered";
+        }
+
+        if (req.file) {
+          filesEraserFromReq(req.file);
+        }
 
         next(createError(409, message));
       }
@@ -207,13 +225,15 @@ class SignupController {
       const id = req.params.id;
       const users = await User.find({ _id: id });
       const userDeleted = await User.deleteOne({ _id: id });
-      const { username, _id, mail } = users[0];
+      const { username, _id, mail, image } = users[0];
       const response = {
         ...userDeleted,
         username,
         _id,
         mail,
       };
+
+      filesEraserFromName(image)
       res.status(200).json({ result: response });
     } catch (error) {
       next(createError(400, 'User not in DB'));

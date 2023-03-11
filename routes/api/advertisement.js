@@ -50,11 +50,6 @@ router.get(
         },
       };
 
-      //Prueba de emisión de evento para socket.io
-      eventEmitter.emit(events.HELLO_WORLD, {
-        data: response.meta.totalNumOfAds,
-      });
-
       res.status(200).json(response);
     } catch (error) {
       next(createError(500, "Advertisements are not available in this moment"));

@@ -13,9 +13,11 @@ const signupController = new SignupController();
 router.get("/", signupController.getAllUsers);
 
 /*GET user by id */
-router.get("/:id", signupController.getUserById);
+router.get("/:id", signupController.getPublicUserInfoById);
 
-router.get("/user/:username", signupController.getUserByUsername);
+/*GET user by id */
+//TODO Proteger la salida de datos privados el usuario sólo si es él
+router.get("/private/:id", signupController.getUserById);
 
 /* POST signup user */
 router.post(

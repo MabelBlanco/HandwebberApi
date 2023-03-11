@@ -1,20 +1,24 @@
-'use strict';
+"use strict";
+const User = require("../UserModel/User");
 
-const mongoose = require('mongoose');
-const dataValidator = require('./dataValidator');
-const assingSearchParameters = require('./dataFilters');
+const mongoose = require("mongoose");
+const dataValidator = require("./dataValidator");
+const assingSearchParameters = require("./dataFilters");
 
 //Esquema
 const adSchema = mongoose.Schema({
   active: { type: Boolean, required: true, default: true },
   name: { type: String, required: true },
-  image: { type: String },
+  image: { type: String, required: false },
   description: { type: String, required: true },
   custom: { type: Boolean, required: true, default: false },
   price: { type: Number, required: true },
   stock: { type: Number, default: 0 },
   tags: { type: Array, required: true },
-  idUser: { type: String, required: true },
+  idUser: {
+    _id: { type: String, required: true },
+    username: { type: String, required: true },
+  },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
   username: { type: String, required: true },
@@ -28,7 +32,9 @@ adSchema.index({ price: -1 });
 adSchema.index({ tags: 1 });
 adSchema.index({ tags: -1 });
 adSchema.index({ update: 1 });
-adSchema.index({ username: 1})
+const idUserProperty = "idUser._id";
+adSchema.index({ [idUserProperty]: 1 });
+adSchema.index({ [idUserProperty]: -1 });
 
 /**
  *
@@ -60,7 +66,7 @@ adSchema.statics.dataValidator = dataValidator;
 adSchema.statics.assingSearchParameters = assingSearchParameters;
 
 //Crear modelo
-const Advertisement = mongoose.model('Advertisement', adSchema);
+const Advertisement = mongoose.model("Advertisement", adSchema);
 
 //Exportar modelo
 module.exports = Advertisement;

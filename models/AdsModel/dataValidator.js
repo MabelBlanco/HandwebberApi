@@ -57,8 +57,8 @@ module.exports = function adDataValidator(method) {
         .withMessage('You can only sort by: (-)name, (-)price, (-)update'),
     ];
   }
-  //Post fields
-  if (methodLow === 'post') {
+  //Post and put fields
+  if (methodLow === 'post' || methodLow === 'put') {
     return [
       body('active')
         .if(body('active').exists())
@@ -97,6 +97,10 @@ module.exports = function adDataValidator(method) {
         .withMessage(
           `tags must be an array of strings containing one tag at least`
         ),
+      body('stock')
+        .if(body('stock').exists())
+        .isString()
+        .withMessage('idUser must be a string'),
     ];
   }
 };

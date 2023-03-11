@@ -63,7 +63,9 @@ module.exports = function assingSearchParameters(req) {
     filters.price = priceFilter(req.query.price);
   }
   if (req.query.idUser) {
-    filters.idUser = req.query.idUser;
+    const idUserProperty = 'idUser._id';
+
+    filters = { ...filters, [idUserProperty]: req.query.idUser };
   }
 
   data.filters = filters;

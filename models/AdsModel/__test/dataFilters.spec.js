@@ -17,21 +17,28 @@ describe('assingSearchParameters test...', () => {
     const result = assingSearchParameters(req);
     expect(result).toMatchObject(responseExpected);
   });
-  it('should return filters object if name || tag || price filters is aported in query params', () => {
+  it('should return filters object if name || tag || price || idUser filters is aported in query params', () => {
     let req = {};
     req.query = {
       name: 'test',
       tag: 'testTag',
       price: '45',
+      idUser: 'abcdef567',
     };
+
+    const idUserProperty = 'idUser._id';
     const responseExpected = {
       filters: {
         name: {
           $options: 'i',
           $regex: req.query.name,
         },
-        tags: 'testtag',
+        tags: {
+          $options: 'i',
+          $regex: req.query.tag.toLowerCase(),
+        },
         price: 45,
+        [idUserProperty]: req.query.idUser,
       },
       skip: undefined,
       limit: undefined,

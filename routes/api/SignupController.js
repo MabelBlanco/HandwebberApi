@@ -75,6 +75,19 @@ class SignupController {
     }
   }
 
+  async getPublicUserInfoById(req, res, next) {
+    try {
+      const _id = req.params.id;
+      console.log('ETOY AQUIIII', _id);
+      //const user = await User.findById({ _id: _id });
+      const user = await User.findOne({ _id: _id }, { username: 1, image: 1 });
+
+      res.status(200).json({ result: user });
+    } catch (error) {
+      next(createError(404, 'User not found'));
+    }
+  }
+
   async postSignup(req, res, next) {
     try {
       validationResult(req).throw();

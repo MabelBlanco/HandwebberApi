@@ -21,7 +21,6 @@ const adSchema = mongoose.Schema({
   },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
-  username: { type: String, required: true },
 });
 
 //DB indexes

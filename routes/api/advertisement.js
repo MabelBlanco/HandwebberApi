@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 const createError = require("http-errors");
 const router = express.Router();
 const upload = require("../../lib/uploadConfig");
-const { Advertisement, User, User } = require("../../models");
+const { Advertisement, User } = require("../../models");
 const path = require("path");
 const {
   filesEraserFromReq,

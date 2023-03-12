@@ -4,7 +4,10 @@ const createError = require("http-errors");
 const { body, validationResult } = require("express-validator");
 const { User } = require("../../models");
 const path = require("path");
-const filesEraser = require("../../lib/filesEraser");
+const {
+  filesEraserFromReq,
+  filesEraserFromName,
+} = require("../../lib/filesEraser");
 const publisher = require("../../lib/rabbitmq/publisher");
 const generator = require("generate-password");
 
@@ -78,13 +81,13 @@ class SignupController {
   async getPublicUserInfoById(req, res, next) {
     try {
       const _id = req.params.id;
-      console.log('ETOY AQUIIII', _id);
+      console.log("ETOY AQUIIII", _id);
       //const user = await User.findById({ _id: _id });
       const user = await User.findOne({ _id: _id }, { username: 1, image: 1 });
 
       res.status(200).json({ result: user });
     } catch (error) {
-      next(createError(404, 'User not found'));
+      next(createError(404, "User not found"));
     }
   }
 
@@ -99,7 +102,7 @@ class SignupController {
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(err);
@@ -158,7 +161,7 @@ class SignupController {
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(createError(409, message));
@@ -176,7 +179,7 @@ class SignupController {
 
       //If there's a validation error, we'll erase the file uploaded
       if (req.file) {
-        filesEraser(req.file);
+        filesEraserFromReq(req.file);
       }
 
       next(err);
@@ -237,6 +240,10 @@ class SignupController {
           message = "This email is already registered";
         }
 
+        if (req.file) {
+          filesEraserFromReq(req.file);
+        }
+
         next(createError(409, message));
       }
     }
@@ -285,13 +292,15 @@ class SignupController {
       const id = req.params.id;
       const users = await User.find({ _id: id });
       const userDeleted = await User.deleteOne({ _id: id });
-      const { username, _id, mail } = users[0];
+      const { username, _id, mail, image } = users[0];
       const response = {
         ...userDeleted,
         username,
         _id,
         mail,
       };
+
+      filesEraserFromName(image);
       res.status(200).json({ result: response });
     } catch (error) {
       next(createError(400, "User not in DB"));

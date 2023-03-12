@@ -3,7 +3,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const assingSearchParameters = require("./dataFilters");
-const nodemailer = require("nodemailer");
 
 //Esquema
 const userSchema = mongoose.Schema({

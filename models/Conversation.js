@@ -15,10 +15,10 @@ const conversationSchema = mongoose.Schema({
 });
 
 //DB indexes
-userSchema.index({ advertisement: 1 });
-userSchema.index({ advertisement: -1 });
-userSchema.index({ users: 1 });
-userSchema.index({ users: -1 });
+conversationSchema.index({ advertisement: 1 });
+conversationSchema.index({ advertisement: -1 });
+conversationSchema.index({ users: 1 });
+conversationSchema.index({ users: -1 });
 
 //Create Model
 const Conversation =

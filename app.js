@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/users", require("./routes/api/users"));
 app.use("/api/users/login", require("./routes/api/login"));
 app.use("/api/advertisement", require("./routes/api/advertisement"));
+app.use("/api/chat", require("./routes/api/chat"));
 
 /**
  * Rutas del website

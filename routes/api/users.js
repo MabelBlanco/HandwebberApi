@@ -6,6 +6,7 @@ const upload = require('../../lib/uploadConfig');
 const SignupController = require('./SignupController');
 const loginRouter = require('./login');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
+const authUserActionsMiddleware = require('../../lib/authUserActionsMiddleware');
 
 const signupController = new SignupController();
 
@@ -17,7 +18,11 @@ router.get('/:id', signupController.getPublicUserInfoById);
 
 /*GET user by id */
 //TODO Proteger la salida de datos privados el usuario sólo si es él
-router.get('/private/:id', signupController.getUserById);
+router.get(
+  '/private/:id',
+  authUserActionsMiddleware,
+  signupController.getUserById
+);
 
 /* POST signup user */
 router.post(

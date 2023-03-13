@@ -4,7 +4,10 @@ const createError = require('http-errors');
 const { body, validationResult } = require('express-validator');
 const { User } = require('../../models');
 const path = require('path');
-const { filesEraserFromReq, filesEraserFromName } = require('../../lib/filesEraser');
+const {
+  filesEraserFromReq,
+  filesEraserFromName,
+} = require('../../lib/filesEraser');
 
 class SignupController {
   validation() {
@@ -53,7 +56,10 @@ class SignupController {
     try {
       const _id = req.params.id;
 
-      const user = await User.findById({ _id: _id });
+      const user = await User.findById(
+        { _id: _id },
+        { username: 1, mail: 1, image: 1, subscriptions: 1 }
+      );
 
       res.status(200).json({ result: user });
     } catch (error) {
@@ -64,9 +70,10 @@ class SignupController {
   async getPublicUserInfoById(req, res, next) {
     try {
       const _id = req.params.id;
-      console.log('ETOY AQUIIII', _id);
-      //const user = await User.findById({ _id: _id });
-      const user = await User.findOne({ _id: _id }, { username: 1, image: 1, subscriptions: 1 });
+      const user = await User.findOne(
+        { _id: _id },
+        { username: 1, image: 1, subscriptions: 1 }
+      );
 
       res.status(200).json({ result: user });
     } catch (error) {
@@ -119,15 +126,15 @@ class SignupController {
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
-     
+
       let message;
 
-      if (key === "username") {
-        message = "This username is not available";
+      if (key === 'username') {
+        message = 'This username is not available';
       }
 
-      if (key === "mail") {
-        message = "This email is already registered";
+      if (key === 'mail') {
+        message = 'This email is already registered';
       }
 
       //If there's a validation error, we'll erase the file uploaded
@@ -200,15 +207,15 @@ class SignupController {
       } else {
         const notAvailable = error.keyValue; // Capturo el campo del error
         const key = Object.keys(notAvailable)[0];
-        
+
         let message;
 
-        if (key === "username") {
-          message = "This username is not available";
+        if (key === 'username') {
+          message = 'This username is not available';
         }
-  
-        if (key === "mail") {
-          message = "This email is already registered";
+
+        if (key === 'mail') {
+          message = 'This email is already registered';
         }
 
         if (req.file) {
@@ -233,7 +240,7 @@ class SignupController {
         mail,
       };
 
-      filesEraserFromName(image)
+      filesEraserFromName(image);
       res.status(200).json({ result: response });
     } catch (error) {
       next(createError(400, 'User not in DB'));

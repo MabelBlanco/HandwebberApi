@@ -1,26 +1,26 @@
-'use strict';
+"use strict";
 
-require('dotenv').config();
+require("dotenv").config();
 
-const readline = require('readline');
+const readline = require("readline");
 
 // conectar a la base de datos
-const connection = require('./lib/connectMongoose');
+const connection = require("./lib/connectMongoose");
 
 // cargar los modelos
-const { User, Advertisement } = require('./models');
+const { User, Advertisement } = require("./models");
 
 async function main() {
   await connection.$initialConnection;
   const continuar = await pregunta(
-    'Estas seguro, seguro, seguro, de que quieres borrar toda la base de datos y cargar datos iniciales (si/NO): '
+    "Estas seguro, seguro, seguro, de que quieres borrar toda la base de datos y cargar datos iniciales (si/NO): "
   );
   if (!continuar) {
     process.exit();
   }
 
   //Import Data File
-  const adsFile = require('./baseAds.json');
+  const adsFile = require("./baseAds.json");
 
   //Inicializamos la colección de usuarios
   await initUsers(adsFile.users);
@@ -31,7 +31,7 @@ async function main() {
   connection.close();
 }
 
-main().catch((err) => console.log('Hubo un error:', err));
+main().catch((err) => console.log("Hubo un error:", err));
 
 async function initUsers(data) {
   // borrar todos los documentos de usuarios
@@ -39,7 +39,7 @@ async function initUsers(data) {
   console.log(`Eliminados ${deleted.deletedCount} usuarios.`);
 
   let newData = [...data];
-  const password = await User.hashPassword('1234');
+  const password = await User.hashPassword("1234");
 
   // crear usuarios iniciales
   for (let index = 0; index < newData.length; index++) {
@@ -81,7 +81,7 @@ function pregunta(texto) {
 
     ifc.question(texto, (respuesta) => {
       ifc.close();
-      if (respuesta.toLowerCase() === 'si') {
+      if (respuesta.toLowerCase() === "si") {
         resolve(true);
         return;
       }

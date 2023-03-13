@@ -47,4 +47,7 @@ router.delete('/:id', jwtAuthMiddleware, signupController.deleteUser);
 /* LOGIN user*/
 router.use('/login', loginRouter);
 
+/* Recover Password */
+router.put('/recover-password/:mail', signupController.recoverPassword);
+
 module.exports = router;

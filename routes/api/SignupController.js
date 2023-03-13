@@ -8,6 +8,8 @@ const {
   filesEraserFromReq,
   filesEraserFromName,
 } = require('../../lib/filesEraser');
+const publisher = require('../../lib/rabbitmq/publisher');
+const generator = require('generate-password');
 
 class SignupController {
   validation() {
@@ -60,6 +62,18 @@ class SignupController {
         { _id: _id },
         { username: 1, mail: 1, image: 1, subscriptions: 1 }
       );
+
+      res.status(200).json({ result: user });
+    } catch (error) {
+      next(createError(404, 'User not found'));
+    }
+  }
+
+  async getUserByUsername(req, res, next) {
+    try {
+      const username = req.params.username;
+
+      const user = await User.findOne({ username: username });
 
       res.status(200).json({ result: user });
     } catch (error) {
@@ -123,6 +137,18 @@ class SignupController {
 
       //La respuesta es el documento de usuario
       res.status(200).json({ result: userResult });
+
+      // Send a Welcome Email
+      const messageConfig = {
+        function: 'sendEmail',
+        email: 'welcomeEmail',
+        user: userResult,
+      };
+      publisher(messageConfig);
+      //         userResult.sendEmail(
+      //  "Welcome to HandWebber",
+      //  welcomeEmail(userResult.username)
+      //)
     } catch (error) {
       const notAvailable = error.keyValue; // Capturo el campo del error
       const key = Object.keys(notAvailable)[0];
@@ -224,6 +250,44 @@ class SignupController {
 
         next(createError(409, message));
       }
+    }
+  }
+
+  async recoverPassword(req, res, next) {
+    try {
+      const mail = req.params.mail;
+      const user = await User.findOne({ mail });
+      if (!user) {
+        next(createError(409, 'This email do not have an account'));
+      }
+      const newPassword = generator.generate({
+        length: 10,
+        numbers: true,
+        lowercase: true,
+        uppercase: true,
+      });
+
+      const newHashPassword = await User.hashPassword(newPassword);
+
+      const updateUser = await User.findOneAndUpdate(
+        { _id: user._id },
+        { password: newHashPassword },
+        {
+          new: true,
+        }
+      );
+      // Send email with password
+      const messageConfig = {
+        function: 'sendEmail',
+        email: 'recoverPasswordEmail',
+        user: user,
+        pass: newPassword,
+      };
+      publisher(messageConfig);
+
+      res.status(200).json({ result: updateUser });
+    } catch (error) {
+      next(createError(400, 'Bad Request'));
     }
   }
 

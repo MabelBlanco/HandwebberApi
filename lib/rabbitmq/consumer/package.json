@@ -1,0 +1,21 @@
+{
+  "name": "rabbitmq",
+  "version": "1.0.0",
+  "description": "",
+  "main": "connectAMQP.js",
+  "scripts": {
+    "start": "node consumer.js",
+    "dev": "cross-env NODE_ENV=development node consumer.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "nodemailer": "^6.9.1",
+    "nodemailer-sendinblue-transport": "^2.0.1"
+  }
+}

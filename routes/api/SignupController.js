@@ -1,43 +1,43 @@
-"use strict";
+'use strict';
 
-const createError = require("http-errors");
-const { body, validationResult } = require("express-validator");
-const { User } = require("../../models");
-const path = require("path");
+const createError = require('http-errors');
+const { body, validationResult } = require('express-validator');
+const { User } = require('../../models');
+const path = require('path');
 const {
   filesEraserFromReq,
   filesEraserFromName,
-} = require("../../lib/filesEraser");
-const publisher = require("../../lib/rabbitmq/publisher");
-const generator = require("generate-password");
+} = require('../../lib/filesEraser');
+const publisher = require('../../lib/rabbitmq/publisher');
+const generator = require('generate-password');
 
 class SignupController {
   validation() {
     return [
-      body("username")
+      body('username')
         .isAlphanumeric()
-        .withMessage("Username must be alphanumeric"),
-      body("mail").isEmail().withMessage("Insert a valid mail please"),
-      body("password")
+        .withMessage('Username must be alphanumeric'),
+      body('mail').isEmail().withMessage('Insert a valid mail please'),
+      body('password')
         .isLength({ min: 8 })
-        .withMessage("Password min length 8 characters"),
+        .withMessage('Password min length 8 characters'),
     ];
   }
 
   updateValidation() {
     return [
-      body("username")
-        .if(body("username").exists())
+      body('username')
+        .if(body('username').exists())
         .isAlphanumeric()
-        .withMessage("Username must be alphanumeric"),
-      body("mail")
-        .if(body("mail").exists())
+        .withMessage('Username must be alphanumeric'),
+      body('mail')
+        .if(body('mail').exists())
         .isEmail()
-        .withMessage("Insert a valid mail please"),
-      body("password")
-        .if(body("password").exists())
+        .withMessage('Insert a valid mail please'),
+      body('password')
+        .if(body('password').exists())
         .isLength({ min: 8 })
-        .withMessage("Password min length 8 characters"),
+        .withMessage('Password min length 8 characters'),
     ];
   }
 
@@ -50,7 +50,7 @@ class SignupController {
 
       res.status(200).json({ results: result });
     } catch (error) {
-      next(createError(400, "ERROR in DB"));
+      next(createError(400, 'ERROR in DB'));
     }
   }
 
@@ -58,11 +58,14 @@ class SignupController {
     try {
       const _id = req.params.id;
 
-      const user = await User.findById({ _id: _id });
+      const user = await User.findById(
+        { _id: _id },
+        { username: 1, mail: 1, image: 1, subscriptions: 1 }
+      );
 
       res.status(200).json({ result: user });
     } catch (error) {
-      next(createError(404, "User not found"));
+      next(createError(404, 'User not found'));
     }
   }
 
@@ -74,20 +77,21 @@ class SignupController {
 
       res.status(200).json({ result: user });
     } catch (error) {
-      next(createError(404, "User not found"));
+      next(createError(404, 'User not found'));
     }
   }
 
   async getPublicUserInfoById(req, res, next) {
     try {
       const _id = req.params.id;
-      console.log("ETOY AQUIIII", _id);
-      //const user = await User.findById({ _id: _id });
-      const user = await User.findOne({ _id: _id }, { username: 1, image: 1 });
+      const user = await User.findOne(
+        { _id: _id },
+        { username: 1, image: 1, subscriptions: 1 }
+      );
 
       res.status(200).json({ result: user });
     } catch (error) {
-      next(createError(404, "User not found"));
+      next(createError(404, 'User not found'));
     }
   }
 
@@ -115,7 +119,7 @@ class SignupController {
       //Añado los campos para la peticion
       let image = null;
       if (req.file) {
-        const destination = req.file?.destination.split("public")[1];
+        const destination = req.file?.destination.split('public')[1];
 
         image = path.join(destination, req.file?.filename);
       }
@@ -136,8 +140,8 @@ class SignupController {
 
       // Send a Welcome Email
       const messageConfig = {
-        function: "sendEmail",
-        email: "welcomeEmail",
+        function: 'sendEmail',
+        email: 'welcomeEmail',
         user: userResult,
       };
       publisher(messageConfig);
@@ -151,12 +155,12 @@ class SignupController {
 
       let message;
 
-      if (key === "username") {
-        message = "This username is not available";
+      if (key === 'username') {
+        message = 'This username is not available';
       }
 
-      if (key === "mail") {
-        message = "This email is already registered";
+      if (key === 'mail') {
+        message = 'This email is already registered';
       }
 
       //If there's a validation error, we'll erase the file uploaded
@@ -193,7 +197,7 @@ class SignupController {
       let image = null;
       console.log(req.file);
       if (req.file) {
-        const destination = req.file?.destination.split("public")[1];
+        const destination = req.file?.destination.split('public')[1];
 
         image = path.join(destination, req.file?.filename);
         data.image = image;
@@ -225,19 +229,19 @@ class SignupController {
       res.status(200).json({ result: updateUser });
     } catch (error) {
       if (!error.keyValue) {
-        next(createError(400, "Bad Request"));
+        next(createError(400, 'Bad Request'));
       } else {
         const notAvailable = error.keyValue; // Capturo el campo del error
         const key = Object.keys(notAvailable)[0];
 
         let message;
 
-        if (key === "username") {
-          message = "This username is not available";
+        if (key === 'username') {
+          message = 'This username is not available';
         }
 
-        if (key === "mail") {
-          message = "This email is already registered";
+        if (key === 'mail') {
+          message = 'This email is already registered';
         }
 
         if (req.file) {
@@ -254,7 +258,7 @@ class SignupController {
       const mail = req.params.mail;
       const user = await User.findOne({ mail });
       if (!user) {
-        next(createError(409, "This email do not have an account"));
+        next(createError(409, 'This email do not have an account'));
       }
       const newPassword = generator.generate({
         length: 10,
@@ -274,8 +278,8 @@ class SignupController {
       );
       // Send email with password
       const messageConfig = {
-        function: "sendEmail",
-        email: "recoverPasswordEmail",
+        function: 'sendEmail',
+        email: 'recoverPasswordEmail',
         user: user,
         pass: newPassword,
       };
@@ -283,7 +287,7 @@ class SignupController {
 
       res.status(200).json({ result: updateUser });
     } catch (error) {
-      next(createError(400, "Bad Request"));
+      next(createError(400, 'Bad Request'));
     }
   }
 
@@ -303,7 +307,7 @@ class SignupController {
       filesEraserFromName(image);
       res.status(200).json({ result: response });
     } catch (error) {
-      next(createError(400, "User not in DB"));
+      next(createError(400, 'User not in DB'));
     }
   }
 }

@@ -17,7 +17,11 @@ Create an `.env` file. You have an configuration example in `.env.example`.
 - You have to indicate the conexion string to mongodb.
 - You have to indicate the private JWT key.
 - You have to indicate the maximun image size files in megabytes: `MAX_FILES_SIZE_MB=5` (5 MB maximun). 5MB is the default value if this variable is not set.
-- Default port for the application is 3000. If you want to change it, it's necessary to indicate the PORT environment variable, with the port to use. For example: `PORT=8000`.  
+- You have to indicate the service mail. Example: `EMAIL_SERVICE_FROM=info@handwebber.com`
+- You have to indicate the RabbitMQ url. Example: `RABBITMQ_URL=your://rabbitmqlurl`
+- Default port for the application is 3000. If you want to change it, it's necessary to indicate the PORT environment variable, with the port to use. For example: `PORT=8000`.
+- Configure the e-mails sender (look down in this instructions). The app can run without sending emails.
+
   Run `npm run init`.
 
 ## DEVELOPER MODE
@@ -67,17 +71,23 @@ Introducing '-' before the field name, will sort in reverse mode.
 
 ## SEND EMAILS
 
+### Configuring emails sender in your server.
+
+- Go to folder "consumer".
+- `npm i`
+- Configure the `.env` file:
+
+  - WEB_HOME_URL=`yourhomeurl`
+  - You have to indicate the service mail. Example: `EMAIL_SERVICE_FROM=info@handwebber.com`
+  - You have to indicate the API Key for your emaile service: Example: `SENDINBLUE_EMAIL_SERVICE_APIKEY=yourAPIKey`
+  - You have to indicate the RabbitMQ url. **This URL must be the same that in your app .env configuration**. Example: `RABBITMQ_URL=your://rabbitmqlurl`
+
+  This is a microservice. You must run this module apart.  
+  To run this module, you must call `npm run start`.
+
+### Preparing a module to send mails with email sender.
+
 We have a worker called "consumer". He only send emails and notification, like a microservice.
-
-So, if we want to send an email, we must to download and install the consumer:
-1- Go to folder "consumer".
-
-2-
-
-```
-npm i
-
-```
 
 After, we must to publisher a message with the properties that we will need for send the email.
 

@@ -156,7 +156,7 @@ router.post(
 router.delete(
   '/:id',
   jwtAuthMiddleware,
-  authUserActionsMiddleware,
+  authUserActionsMiddleware(Advertisement.findAdOwner),
   async function (req, res, next) {
     try {
       const id = req.params.id;

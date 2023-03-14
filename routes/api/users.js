@@ -6,7 +6,9 @@ const upload = require('../../lib/uploadConfig');
 const SignupController = require('./SignupController');
 const loginRouter = require('./login');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
-const authUserActionsMiddleware = require('../../lib/authUserActionsMiddleware');
+const {
+  authUserActionsMiddleware,
+} = require('../../lib/authUserActionsMiddleware');
 
 const signupController = new SignupController();
 
@@ -36,13 +38,19 @@ router.post(
 router.put(
   '/:id',
   jwtAuthMiddleware,
+  authUserActionsMiddleware(),
   upload.single('image'),
   signupController.updateValidation(),
   signupController.updateUser
 );
 
 /* DELETE user by ID */
-router.delete('/:id', jwtAuthMiddleware, signupController.deleteUser);
+router.delete(
+  '/:id',
+  jwtAuthMiddleware,
+  authUserActionsMiddleware(),
+  signupController.deleteUser
+);
 
 /* LOGIN user*/
 router.use('/login', loginRouter);

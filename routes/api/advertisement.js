@@ -12,7 +12,9 @@ const {
   filesEraserFromName,
 } = require('../../lib/filesEraser');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
-const authUserActionsMiddleware = require('../../lib/authUserActionsMiddleware');
+const {
+  authUserActionsMiddleware,
+} = require('../../lib/authUserActionsMiddleware');
 const fs = require('fs');
 
 router.get(
@@ -183,7 +185,7 @@ router.put(
   '/:id',
   jwtAuthMiddleware,
   upload.single('image'),
-  authUserActionsMiddleware,
+  authUserActionsMiddleware(Advertisement.findAdOwner),
   Advertisement.dataValidator('put'),
   async (req, res, next) => {
     try {

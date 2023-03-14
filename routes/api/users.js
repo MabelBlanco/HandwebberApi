@@ -20,7 +20,7 @@ router.get('/:id', signupController.getPublicUserInfoById);
 //TODO Proteger la salida de datos privados el usuario sólo si es él
 router.get(
   '/private/:id',
-  authUserActionsMiddleware,
+  //TODO  authUserActionsMiddleware,
   signupController.getUserById
 );
 

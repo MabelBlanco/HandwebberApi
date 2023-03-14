@@ -8,7 +8,7 @@ const readline = require("readline");
 const connection = require("./lib/connectMongoose");
 
 // cargar los modelos
-const { User, Advertisement } = require("./models");
+const { User, Advertisement, Conversation } = require("./models");
 
 async function main() {
   await connection.$initialConnection;
@@ -27,6 +27,9 @@ async function main() {
 
   //Initializing ads collection
   await initAds(adsFile.advertisements);
+
+  //Deleted all conversations
+  await deleteConversations();
 
   connection.close();
 }
@@ -70,6 +73,11 @@ async function initAds(data) {
 
   const inserted = await Advertisement.insertMany(newData);
   console.log(`Created ${inserted.length} advertisements.`);
+}
+
+async function deleteConversations() {
+  const deleted = await Conversation.deleteMany();
+  console.log(`Eliminadas ${deleted.deletedCount} conversaciones`);
 }
 
 function pregunta(texto) {

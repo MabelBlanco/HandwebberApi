@@ -6,7 +6,9 @@ const upload = require('../../lib/uploadConfig');
 const SignupController = require('./SignupController');
 const loginRouter = require('./login');
 const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
-const authUserActionsMiddleware = require('../../lib/authUserActionsMiddleware');
+const {
+  authUserActionsMiddleware,
+} = require('../../lib/authUserActionsMiddleware');
 
 const signupController = new SignupController();
 
@@ -17,10 +19,13 @@ router.get('/', signupController.getAllUsers);
 router.get('/:id', signupController.getPublicUserInfoById);
 
 /*GET user by id */
-//TODO Proteger la salida de datos privados el usuario sólo si es él
+router.get('/user/:username', signupController.getUserByUsername);
+
+/*GET private user data by id */
 router.get(
   '/private/:id',
-  authUserActionsMiddleware,
+  jwtAuthMiddleware,
+  authUserActionsMiddleware(),
   signupController.getUserById
 );
 
@@ -36,13 +41,19 @@ router.post(
 router.put(
   '/:id',
   jwtAuthMiddleware,
+  authUserActionsMiddleware(),
   upload.single('image'),
   signupController.updateValidation(),
   signupController.updateUser
 );
 
 /* DELETE user by ID */
-router.delete('/:id', jwtAuthMiddleware, signupController.deleteUser);
+router.delete(
+  '/:id',
+  jwtAuthMiddleware,
+  authUserActionsMiddleware(),
+  signupController.deleteUser
+);
 
 /* LOGIN user*/
 router.use('/login', loginRouter);

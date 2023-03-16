@@ -1,9 +1,9 @@
-"use strict";
-const User = require("../UserModel/User");
+'use strict';
+const User = require('../UserModel/User');
 
-const mongoose = require("mongoose");
-const dataValidator = require("./dataValidator");
-const assingSearchParameters = require("./dataFilters");
+const mongoose = require('mongoose');
+const dataValidator = require('./dataValidator');
+const assingSearchParameters = require('./dataFilters');
 
 //Esquema
 const adSchema = mongoose.Schema({
@@ -31,7 +31,7 @@ adSchema.index({ price: -1 });
 adSchema.index({ tags: 1 });
 adSchema.index({ tags: -1 });
 adSchema.index({ update: 1 });
-const idUserProperty = "idUser._id";
+const idUserProperty = 'idUser._id';
 adSchema.index({ [idUserProperty]: 1 });
 adSchema.index({ [idUserProperty]: -1 });
 
@@ -61,11 +61,17 @@ adSchema.statics.findAdWithMaxPrice = async function () {
   return query.exec();
 };
 
+adSchema.statics.findAdOwner = async function (adId) {
+  const query = Advertisement.findById(adId);
+  const result = await query.exec();
+  return result.idUser._id;
+};
+
 adSchema.statics.dataValidator = dataValidator;
 adSchema.statics.assingSearchParameters = assingSearchParameters;
 
 //Crear modelo
-const Advertisement = mongoose.model("Advertisement", adSchema);
+const Advertisement = mongoose.model('Advertisement', adSchema);
 
 //Exportar modelo
 module.exports = Advertisement;

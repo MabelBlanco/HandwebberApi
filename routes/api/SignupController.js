@@ -73,7 +73,10 @@ class SignupController {
     try {
       const username = req.params.username;
 
-      const user = await User.findOne({ username: username });
+      const user = await User.findOne(
+        { username: username },
+        { username: 1, image: 1, subscriptions: 1 }
+      );
 
       res.status(200).json({ result: user });
     } catch (error) {

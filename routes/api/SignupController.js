@@ -2,7 +2,7 @@
 
 const createError = require('http-errors');
 const { body, validationResult } = require('express-validator');
-const { User } = require('../../models');
+const { Advertisement, User } = require('../../models');
 const path = require('path');
 const {
   filesEraserFromReq,
@@ -205,6 +205,22 @@ class SignupController {
         image = path.join(destination, req.file?.filename);
         data.image = image;
       }
+
+      if(data.username) {
+        const user = await User.findOne({ _id: _id });
+        const filter = {idUser: {_id, username: user.username}};
+        const ads = await Advertisement.search(filter);
+        for(let ad of ads) {
+          const newUsername = {
+            idUser: {
+              _id,
+              username: data.username
+            }
+          };
+          const newAd = await Advertisement.findOneAndUpdate({_id: ad._id}, newUsername, {new: true});
+        };
+      };
+
       if (data.password) {
         data.password = await User.hashPassword(data.password);
       }

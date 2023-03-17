@@ -15,6 +15,7 @@ router.get("/:userId", jwtAuthMiddleware, async (req, res, next) => {
       next(error);
       return;
     }
+
     res.status(200).json(chat);
   } catch (error) {
     next(createError(500, error));

@@ -208,6 +208,11 @@ class SignupController {
 
       if(data.username) {
         const user = await User.findOne({ _id: _id });
+        const compareName = await User.findOne({username: data.username});
+        if(compareName) {
+          next(createError(409,'This username is already registered'));
+          return;
+        }
         const filter = {idUser: {_id, username: user.username}};
         const ads = await Advertisement.search(filter);
         for(let ad of ads) {

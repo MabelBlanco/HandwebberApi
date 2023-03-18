@@ -1,0 +1,711 @@
+openapi: 3.0.3
+info:
+  title: Swagger HandWebber-API - OpenAPI 3.0
+  version: '1.0'
+  description: |-
+    Wellcome to handWebber!!
+
+    If you are a craftsman, making your own products... This is your application!!.
+
+    We search put in conctac artisans and their products with their customers, supplaing a easy way to show and contact.
+
+    If you are looking for **hand** made articles... this is your **Web**.  
+    If you are looling for selling your **hand** made articles... this is your **Web**.  
+    You can directly work in our web [handWebber](http://54.84.80.202).
+
+    But if you are looking for build your own application, in this page you can access to the necessary information to interacting with **handWebber**.  
+
+    *Be a **handWebber***
+
+  termsOfService: http://54.84.80.202
+  contact:
+    email: info@handwebber.com
+
+servers:
+  - url: https://54.84.80.202/api-docs
+tags:
+  - name: Advertisement
+    description: Access to advertisements
+  - name: Users
+    description: Access to users operations
+
+paths:
+  /api/advertisement:
+    get:
+      tags:
+        - Advertisement
+      summary: Get the public advertisements
+      operationId: getAdvertisements
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: filter by name
+          explode: true
+          schema:
+            type: string
+        - name: price
+          in: query
+          required: false
+          description: filter by price... x-y || x- || -x || x
+          explode: true
+          schema:
+            type: string
+            pattern: '^([0-9]{1,7}-[0-9]{1,7}|[0-9]{1,7}-|[0-9]{1,7}|-[0-9]{1,7}){1}$'
+        - name: tag
+          in: query
+          required: false
+          description: filter by tag
+          explode: true
+          schema:
+            type: string
+        - name: skip
+          in: query
+          required: false
+          description: Pagination. Skip the X first ads.
+          explode: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          description: Pagination. Limit of advertisements to return
+          explode: true
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          required: false
+          description: Sort by (-)name || (-)price || (-)update
+          explode: true
+          schema:
+            enum:
+              - name
+              - -name
+              - price
+              - -price
+              - update
+              - -update
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Advertisements'
+        '500':
+          description: Advertisements are not available in this moment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          $ref: '#/components/responses/422'
+
+    post:
+      tags:
+        - Advertisement
+      summary: Add a new advertisement to the web
+      description: Add a new advertisement to the web
+      operationId: addAdvertisement
+      requestBody:
+        description: Create a new advertisement in the web
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateAdvertisement'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Advertisement'
+        '500':
+          description: Advertisements are not available in this moment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          $ref: '#/components/responses/422'
+      security:
+        - Authorization: []
+
+  /api/advertisement/{id}:
+    get:
+      tags:
+        - Advertisement
+      summary: Find one advertisement by id
+      operationId: getAdById
+      parameters:
+        - name: id
+          in: path
+          description: id of the advertisement to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Advertisement'
+
+    put:
+      tags:
+        - Advertisement
+      summary: Add a new advertisement to the web
+      description: Add a new advertisement to the web
+      operationId: updateAdvertisement
+      parameters:
+        - name: id
+          in: path
+          description: id of the advertisement to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create a new advertisement in the web
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateAdvertisement'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Advertisement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          description: Advertisements are not available in this moment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          $ref: '#/components/responses/422'
+      security:
+        - Authorization: []
+
+    delete:
+      tags:
+        - Advertisement
+      summary: Delete the indicated ad
+      operationId: deleteAdById
+      parameters:
+        - name: id
+          in: path
+          description: id of the advertisement to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Susccessful operation. Returns the deleted ad
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Advertisement'
+        '400':
+          description: The ad doesn't exists in DB
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/401'
+      security:
+        - Authorization: []
+
+  /api/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Find one user by id
+      operationId: getUserPublicInfoById
+      parameters:
+        - name: id
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/404'
+
+    put:
+      tags:
+        - Users
+      summary: Update one user by id
+      operationId: updateUserById
+      parameters:
+        - name: id
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+      security:
+        - Authorization: []
+
+    delete:
+      tags:
+        - Users
+      summary: Delete one user by id
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation. Return the user deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: User is not in DB
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - Authorization: []
+
+  /api/users/user/{username}:
+    get:
+      tags:
+        - Users
+      summary: Find one user by id
+      operationId: getUserPublicInfoByUsername
+      parameters:
+        - name: username
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/404'
+
+  /api/users/private/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get private user info by id
+      operationId: getUserPrivateInfoById
+      parameters:
+        - name: id
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+      security:
+        - Authorization: []
+
+  /api/users/signup:
+    post:
+      tags:
+        - Users
+      summary: Signup into platform
+      operationId: signupUser
+      requestBody:
+        required: true
+        description: Signup of new user in handwebber
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '409':
+          description: Error signingup a new user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/login:
+    post:
+      tags:
+        - Users
+      summary: Login user
+      operationId: loginUser
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - mail
+                - password
+              type: object
+              properties:
+                mail:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Susccessful operation, returning a JWT
+          content:
+            application/json:
+              schema:
+                type: string
+                format: jwt
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/users/recover-password/{mail}:
+    put:
+      tags:
+        - Users
+      summary: Recover the user password
+      operationId: recoverPass
+      parameters:
+        - mail:
+          in: path
+          description: user's mail to recover password
+          required: true
+          schema:
+            type: string
+            format: email
+
+components:
+  schemas:
+    Advertisement:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: id of the advertisement
+        active:
+          type: boolean
+          description: advertisement active
+        name:
+          type: string
+          description: name of the ad
+        description:
+          type: string
+          description: description of the article
+        custom:
+          type: boolean
+          description: the article can be customized
+        price:
+          type: number
+          format: float
+          description: price of each article
+        stock:
+          type: number
+          format: integer
+          description: number of articles on stock
+        image:
+          type: string
+          description: string indicating the path to an representative image
+        creation:
+          type: string
+          format: date-time
+          description: string with the date of ad creation
+        update:
+          type: string
+          format: date-time
+          description: string with the date of the last ad modify
+        tags:
+          type: array
+          items:
+            type: string
+            description: tag associated to this ad
+        idUser:
+          type: object
+          properties:
+            _id:
+              type: string
+              description: string indicating id of the user
+            username:
+              type: string
+        __v:
+          type: integer
+
+    CreateAdvertisement:
+      type: object
+      required:
+        - name
+        - description
+        - custom
+        - price
+        - stock
+        - tags
+      properties:
+        active:
+          type: boolean
+          description: advertisement active
+        name:
+          type: string
+          description: name of the ad
+        description:
+          type: string
+          description: description of the article
+        custom:
+          type: boolean
+          description: the article can be customized
+        price:
+          type: number
+          format: float
+          description: price of each article
+        stock:
+          type: number
+          format: integer
+          description: MINIMUN 0. Number of articles on stock
+        image:
+          type: string
+          description: Image of the article
+          format: binary
+        tags:
+          type: array
+          items:
+            type: string
+            description: tag associated to this ad
+
+    Advertisements:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Advertisement'
+        meta:
+          type: object
+          properties:
+            totalNumOfAds:
+              type: integer
+              description: number of advertisements in DB
+            maxPrice:
+              type: number
+              format: float
+              description: maximun price of an advertisement in DB
+
+    User:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            _id:
+              type: string
+            username:
+              type: string
+            image:
+              description: path to the image of the user
+              type: string
+            subscriptions:
+              description: array of favourites ads
+              type: array
+              items:
+                type: string
+
+    CreateUser:
+      type: object
+      required:
+        - username
+        - mail
+        - password
+      properties:
+        username:
+          type: string
+        mail:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        image:
+          description: Image of the user
+          type: string
+          format: binary
+
+    UpdateUser:
+      type: object
+      properties:
+        username:
+          type: string
+        mail:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        image:
+          description: Image of the user
+          type: string
+          format: binary
+        subscriptions:
+          description: array of favourites ads
+          type: array
+          items:
+            type: string
+            description: id of one favourite advertisement
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 500
+          description: Error.status
+        message:
+          type: string
+          example: internal server error
+          description: Error.message
+
+  responses:
+    Unauthorized:
+      description: Differents errors of authentication can be provided
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: 'no jwtToken provided'
+    401:
+      description: The advertisement or user you want to act with, is not of your property.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: 'This ad is not your property'
+    422:
+      description: Data validations errors. The message will return and array with the wrong fields
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                description: response status
+                example: 422
+              message:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                      example: 'hola'
+                    msg:
+                      type: string
+                      example: 'price must be as pattern ([0-9]{1,7}-[0-9]{1,7}|[0-9]{1,7}-|[0-9]{1,7}|-[0-9]{1,7}){1}'
+                    param:
+                      type: string
+                      example: 'price'
+                    location:
+                      type: string
+                      example: 'query'
+    404:
+      description: element not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: 'User/Ad not found'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer

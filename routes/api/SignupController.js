@@ -41,18 +41,18 @@ class SignupController {
     ];
   }
 
-  async getAllUsers(req, res, next) {
-    //Extracting the data for search
-    let searchParameters = User.assingSearchParameters(req);
+  // async getAllUsers(req, res, next) {
+  //   //Extracting the data for search
+  //   let searchParameters = User.assingSearchParameters(req);
 
-    try {
-      const result = await User.search(searchParameters.filters);
+  //   try {
+  //     const result = await User.search(searchParameters.filters);
 
-      res.status(200).json({ results: result });
-    } catch (error) {
-      next(createError(400, 'ERROR in DB'));
-    }
-  }
+  //     res.status(200).json({ results: result });
+  //   } catch (error) {
+  //     next(createError(400, 'ERROR in DB'));
+  //   }
+  // }
 
   async getUserById(req, res, next) {
     try {

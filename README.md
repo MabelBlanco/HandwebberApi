@@ -20,13 +20,14 @@ Create an `.env` file. You have an configuration example in `.env.example`.
 - You have to indicate the service mail. Example: `EMAIL_SERVICE_FROM=info@handwebber.com`
 - You have to indicate the RabbitMQ url. Example: `RABBITMQ_URL=your://rabbitmqlurl`
 - Default port for the application is 3000. If you want to change it, it's necessary to indicate the PORT environment variable, with the port to use. For example: `PORT=8000`.
-- Configure the e-mails sender (look down in this instructions). The app can run without sending emails.
+- [Configure the e-mails sender](#emailSender) (look down in this instructions). The app can run without sending emails.
 
   Run `npm run init`.
 
 ## DEVELOPER MODE
 
 (with debug and nodemon)
+Run:
 
 ```
 npm run dev
@@ -34,42 +35,22 @@ npm run dev
 
 ## PRODUCTION MODE
 
+Run:
+
 ```
 npm start
 ```
 
-## CALLING ADVERTISEMENTS LIST
+# API DOCS
 
-Make a request with the next configuration:
+One the API is working, you can access to Swagger-Handwebber-Api-Docs, introducing the url `http://yourbaseurl/api-docs`.  
+If you are using the production API in 54.84.80.202, you must indicate [http://54.84.80.202/api-docs](http://54.84.80.202/api-docs)
 
-```bash
-http://localhost:port/api/advertisement
-```
-
-This will return the complete list of advertisements.  
-You can call the `skip` and `limit` query params to make pagination:  
-`.../api/advertisement?skip=10&limit=10` --> this will skip the first ten ads and only will return ten ads more
-
-Also you can apply filters in the query params:
-
-- `name=string` --> it will return the ads which contains the string provided in their name
-- `tag=string` --> it will return the ads which contains the string provided in their tags
-- `idUser=string` --> it will return the ads which contains the idUser provided
-- `price=...` --> it will return the ads selon the range indicated. The range works:
-
-  - **one number** --> it will return the ads with exact price
-  - **two numbers, separates by '-' without spaces** --> it will return the ads between the prices indicated
-  - **one number before '-' without spaces** --> it will return the ads with price greater or equal to the price indicated
-  - **one number after '-' without spaces** --> it will return the ads lower or equal to the price indicated
-
-  Example:  
-  `.../api/advertisement?name=bici&tag=mobility&price=-200`
-
-You can sort the response list, using the `sort` query param, providing the field to sort:  
-`.../api/advertisement?sort=price`  
-Introducing '-' before the field name, will sort in reverse mode.
+# DEVELOPPER NOTES
 
 ## SEND EMAILS
+
+<a name="emailSender"></a>
 
 ### Configuring emails sender in your server.
 
@@ -122,6 +103,39 @@ Property **email** indicates what email you want to send.
 publisher(messageConfig);
 
 ```
+
+# Working with API
+
+## CALLING ADVERTISEMENTS LIST
+
+Make a request with the next configuration:
+
+```bash
+http://localhost:port/api/advertisement
+```
+
+This will return the complete list of advertisements.  
+You can call the `skip` and `limit` query params to make pagination:  
+`.../api/advertisement?skip=10&limit=10` --> this will skip the first ten ads and only will return ten ads more
+
+Also you can apply filters in the query params:
+
+- `name=string` --> it will return the ads which contains the string provided in their name
+- `tag=string` --> it will return the ads which contains the string provided in their tags
+- `idUser=string` --> it will return the ads which contains the idUser provided
+- `price=...` --> it will return the ads selon the range indicated. The range works:
+
+  - **one number** --> it will return the ads with exact price
+  - **two numbers, separates by '-' without spaces** --> it will return the ads between the prices indicated
+  - **one number before '-' without spaces** --> it will return the ads with price greater or equal to the price indicated
+  - **one number after '-' without spaces** --> it will return the ads lower or equal to the price indicated
+
+  Example:  
+  `.../api/advertisement?name=bici&tag=mobility&price=-200`
+
+You can sort the response list, using the `sort` query param, providing the field to sort:  
+`.../api/advertisement?sort=price`  
+Introducing '-' before the field name, will sort in reverse mode.
 
 ### Create new email
 

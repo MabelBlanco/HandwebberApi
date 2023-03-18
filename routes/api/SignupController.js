@@ -198,33 +198,40 @@ class SignupController {
       const data = req.body;
 
       let image = null;
-      console.log(req.file);
       if (req.file) {
         const destination = req.file?.destination.split('public')[1];
 
         image = path.join(destination, req.file?.filename);
         data.image = image;
+
+        const user = await User.findOne({ _id: _id });
+        const foto = user.image;
+        filesEraserFromName(foto);
       }
 
-      if(data.username) {
+      if (data.username) {
         const user = await User.findOne({ _id: _id });
-        const compareName = await User.findOne({username: data.username});
-        if(compareName) {
-          next(createError(409,'This username is already registered'));
+        const compareName = await User.findOne({ username: data.username });
+        if (compareName) {
+          next(createError(409, 'This username is already registered'));
           return;
         }
-        const filter = {idUser: {_id, username: user.username}};
+        const filter = { idUser: { _id, username: user.username } };
         const ads = await Advertisement.search(filter);
-        for(let ad of ads) {
+        for (let ad of ads) {
           const newUsername = {
             idUser: {
               _id,
-              username: data.username
-            }
+              username: data.username,
+            },
           };
-          const newAd = await Advertisement.findOneAndUpdate({_id: ad._id}, newUsername, {new: true});
-        };
-      };
+          const newAd = await Advertisement.findOneAndUpdate(
+            { _id: ad._id },
+            newUsername,
+            { new: true }
+          );
+        }
+      }
 
       if (data.password) {
         data.password = await User.hashPassword(data.password);
@@ -318,17 +325,24 @@ class SignupController {
   async deleteUser(req, res, next) {
     try {
       const id = req.params.id;
-      const users = await User.find({ _id: id });
+      const user = await User.findOne({ _id: id });
       const userDeleted = await User.deleteOne({ _id: id });
-      const { username, _id, mail, image } = users[0];
+      const { username, _id, mail, image } = user;
+      filesEraserFromName(image);
       const response = {
         ...userDeleted,
         username,
         _id,
         mail,
       };
+      const filter = { idUser: { _id: id, username: user.username } };
+      const ads = await Advertisement.search(filter);
+      for (let ad of ads) {
+        const imageAd = ad.image;
+        filesEraserFromName(imageAd);
+        await Advertisement.deleteOne({ _id: ad._id });
+      }
 
-      filesEraserFromName(image);
       res.status(200).json({ result: response });
     } catch (error) {
       next(createError(400, 'User not in DB'));

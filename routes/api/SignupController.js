@@ -198,7 +198,6 @@ class SignupController {
       const data = req.body;
 
       let image = null;
-      console.log(req.file);
       if (req.file) {
         const destination = req.file?.destination.split('public')[1];
 

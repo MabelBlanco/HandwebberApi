@@ -13,7 +13,7 @@ const {
 const signupController = new SignupController();
 
 /* GET users listing. */
-router.get('/', signupController.getAllUsers);
+//router.get('/', signupController.getAllUsers);
 
 /*GET user by id */
 router.get('/:id', signupController.getPublicUserInfoById);

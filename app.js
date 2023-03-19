@@ -27,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * Rutas del API
  */
+app.use('/api/users/tokenTest', require('./routes/api/tokenTest'));
 app.use('/api/users/login', require('./routes/api/login'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/advertisement', require('./routes/api/advertisement'));

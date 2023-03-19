@@ -436,6 +436,25 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
+  /api/users/tokenTest:
+    post:
+      tags:
+        - Users
+      summary: Testig Valid Token
+      operationId: tokenTest
+      responses:
+        '200':
+          description: Susccessful operation, returning a JWT
+          content:
+            application/json:
+              schema:
+                type: string
+                description: user id
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - Authorization: []
+
   /api/users/recover-password/{mail}:
     put:
       tags:

@@ -444,7 +444,7 @@ paths:
       operationId: tokenTest
       responses:
         '200':
-          description: Susccessful operation, returning a JWT
+          description: Susccessful operation, returning the user Id
           content:
             application/json:
               schema:

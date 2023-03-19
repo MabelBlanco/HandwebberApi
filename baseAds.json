@@ -15,18 +15,22 @@
       }
     },
     {
-      "active": true,
-      "name": "Second advertisement",
-      "description": "Otro lorem ipsum etc, etc, etc...",
-      "custom": true,
-      "price": 150,
-      "stock": 0,
-      "tags": ["testing", "custom"],
       "idUser": {
-        "_id": "63eff532490c9510cdf36764",
-        "username": "ivan",
-        "mail": "ivan@ivan.com"
-      }
+        "_id": "6413a4929625f3f35d928b51",
+        "username": "ivan"
+      },
+      "active": true,
+      "name": "prueba nuevo anuncio ivan",
+      "description": "Prueba completa de creación",
+      "custom": false,
+      "price": 45.25,
+      "stock": 2,
+      "tags": [
+        "lifestyle",
+        "sport",
+        "motor",
+        "players"
+      ]
     }
   ],
   "users": [

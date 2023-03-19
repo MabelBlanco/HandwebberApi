@@ -2,10 +2,9 @@
 
 const express = require("express");
 const router = express.Router();
-const upload = require("../../lib/uploadConfig");
-const SignupController = require("./SignupController");
-const loginRouter = require("./login");
-const jwtAuthMiddleware = require("../../lib/jwtAuthMiddleware");
+const upload = require('../../lib/uploadConfig');
+const SignupController = require('./SignupController');
+const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
 const {
   authUserActionsMiddleware,
 } = require("../../lib/authUserActionsMiddleware");
@@ -13,7 +12,7 @@ const {
 const signupController = new SignupController();
 
 /* GET users listing. */
-router.get("/", signupController.getAllUsers);
+//router.get('/', signupController.getAllUsers);
 
 /*GET user by id */
 router.get("/:id", signupController.getPublicUserInfoById);
@@ -54,9 +53,6 @@ router.delete(
   authUserActionsMiddleware(),
   signupController.deleteUser
 );
-
-/* LOGIN user*/
-router.use("/login", loginRouter);
 
 /* Recover Password */
 router.put("/recover-password/:mail", signupController.recoverPassword);

@@ -173,8 +173,7 @@ router.delete(
         next(error);
         return;
       }
-      console.log(error);
-      next(createError(400, "Advertisement not in DB"));
+      next(createError(400, 'Advertisement not in DB'));
     }
   }
 );
@@ -207,7 +206,6 @@ router.put(
     try {
       const _id = req.params.id;
       const { idUser, ...data } = req.body;
-      console.log("datos recibidos", data);
 
       let image = req.file;
       let newImage;
@@ -230,7 +228,6 @@ router.put(
         ...data,
         update: Date.now(),
       };
-      console.log("datos nuevos", newData);
       if (newImage) {
         newData.image = newImage;
       }

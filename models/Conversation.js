@@ -9,7 +9,6 @@ const conversationSchema = mongoose.Schema({
       from: String,
       body: String,
       date: { type: Date, default: Date.now },
-      read: Boolean,
     },
   ],
 });

@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
   mail: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   image: String,
-  subscriptions: [String],
+  subscriptions: { type: Array },
   creation: { type: Date, default: Date.now },
   update: { type: Date, default: Date.now },
 });

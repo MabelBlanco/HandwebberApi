@@ -173,7 +173,7 @@ router.delete(
         next(error);
         return;
       }
-      next(createError(400, 'Advertisement not in DB'));
+      next(createError(400, "Advertisement not in DB"));
     }
   }
 );

@@ -1,9 +1,9 @@
 "use strict";
 
-const createError = require('http-errors');
-const { body, validationResult } = require('express-validator');
-const { Advertisement, User } = require('../../models');
-const path = require('path');
+const createError = require("http-errors");
+const { body, validationResult } = require("express-validator");
+const { Advertisement, User } = require("../../models");
+const path = require("path");
 const {
   filesEraserFromReq,
   filesEraserFromName,
@@ -213,7 +213,7 @@ class SignupController {
         const user = await User.findOne({ _id: _id });
         const compareName = await User.findOne({ username: data.username });
         if (compareName) {
-          next(createError(409, 'This username is already registered'));
+          next(createError(409, "This username is already registered"));
           return;
         }
         const filter = { idUser: { _id, username: user.username } };
@@ -346,83 +346,6 @@ class SignupController {
       res.status(200).json({ result: response });
     } catch (error) {
       next(createError(400, "User not in DB"));
-    }
-  }
-
-  async updateUserSubscriptions(req, res, next) {
-    try {
-      validationResult(req).throw();
-    } catch (error) {
-      const err = {
-        status: 422,
-        message: error.array(),
-      };
-
-      //If there's a validation error, we'll erase the file uploaded
-      if (req.file) {
-        filesEraserFromReq(req.file);
-      }
-
-      next(err);
-      return;
-    }
-
-    try {
-      const _id = req.params.id;
-      const data = req.body;
-
-      let image = null;
-      console.log(req.file);
-      if (req.file) {
-        const destination = req.file?.destination.split("public")[1];
-
-        image = path.join(destination, req.file?.filename);
-        data.image = image;
-      }
-      if (data.password) {
-        data.password = await User.hashPassword(data.password);
-      }
-
-      if (data.subscriptions) {
-        data.subscriptions = data.subscriptions.split(",");
-      }
-
-      let newData = {
-        ...data,
-      };
-
-      const updateUSerSubscriptions = await User.findOneAndUpdate(
-        { _id: _id },
-        newData,
-        {
-          new: true, // esto hace que nos devuelva el documento actualizado
-        }
-      );
-
-      res.status(200).json({ result: updateUSerSubscriptions });
-    } catch (error) {
-      if (!error.keyValue) {
-        next(createError(400, "Bad Request"));
-      } else {
-        const notAvailable = error.keyValue; // Capturo el campo del error
-        const key = Object.keys(notAvailable)[0];
-
-        let message;
-
-        if (key === "username") {
-          message = "This username is not available";
-        }
-
-        if (key === "mail") {
-          message = "This email is already registered";
-        }
-
-        if (req.file) {
-          filesEraserFromReq(req.file);
-        }
-
-        next(createError(409, message));
-      }
     }
   }
 }

@@ -2,9 +2,9 @@
 
 const express = require("express");
 const router = express.Router();
-const upload = require('../../lib/uploadConfig');
-const SignupController = require('./SignupController');
-const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
+const upload = require("../../lib/uploadConfig");
+const SignupController = require("./SignupController");
+const jwtAuthMiddleware = require("../../lib/jwtAuthMiddleware");
 const {
   authUserActionsMiddleware,
 } = require("../../lib/authUserActionsMiddleware");
@@ -56,13 +56,5 @@ router.delete(
 
 /* Recover Password */
 router.put("/recover-password/:mail", signupController.recoverPassword);
-
-/* PUT update user by ID */
-router.put(
-  "/:id/usersubscriptions",
-  upload.single("image"),
-  signupController.updateValidation(),
-  signupController.updateUserSubscriptions
-);
 
 module.exports = router;

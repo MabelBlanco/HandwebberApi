@@ -264,4 +264,71 @@ router.put(
   }
 );
 
+// añadir o quitar de favoritos
+// PUT => http://localhost:3000/api/advertisement/id/subscriptions
+router.put(
+  "/:id/adssubscriptions",
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      validationResult(req).throw();
+    } catch (error) {
+      const err = {
+        status: 422,
+        message: error.array(),
+      };
+
+      //If there's a validation error, we'll erase the file uploaded
+      if (req.file) {
+        filesEraserFromReq(req.file);
+      }
+      next(err);
+      return;
+    }
+
+    try {
+      const _id = req.params.id;
+      const { idUser, ...data } = req.body;
+      console.log("datos recibidos", data);
+
+      let image = req.file;
+      let newImage;
+
+      if (req.file) {
+        const destination = req.file?.destination.split("public")[1];
+        newImage = path.join(destination, req.file?.filename);
+      }
+      data.price = parseFloat(data.price);
+
+      if (image) {
+        const adToErase = await Advertisement.search({ _id: _id });
+        let imageToErase = adToErase[0].image;
+        filesEraserFromName(imageToErase);
+      }
+      console.log(data.subscriptions);
+      data.subscriptions = data.subscriptions.split(",");
+
+      let newData = {
+        ...data,
+      };
+      console.log("datos nuevos", newData);
+      if (newImage) {
+        newData.image = newImage;
+      }
+
+      const updateSubscriptions = await Advertisement.findOneAndUpdate(
+        { _id: _id },
+        newData,
+        {
+          new: true, // esto hace que nos devuelva el documento actualizado
+        }
+      );
+      res.json({ result: updateSubscriptions });
+      //createThumbnail(data.image);
+    } catch (error) {
+      next(createError(error));
+    }
+  }
+);
+
 module.exports = router;

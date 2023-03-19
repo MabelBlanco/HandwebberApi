@@ -1,26 +1,26 @@
-"use strict";
+'use strict';
 
-const express = require("express");
-const { validationResult } = require("express-validator");
-const createError = require("http-errors");
+const express = require('express');
+const { validationResult } = require('express-validator');
+const createError = require('http-errors');
 const router = express.Router();
-const upload = require("../../lib/uploadConfig");
-const { Advertisement, User } = require("../../models");
-const path = require("path");
+const upload = require('../../lib/uploadConfig');
+const { Advertisement, User } = require('../../models');
+const path = require('path');
 const {
   filesEraserFromReq,
   filesEraserFromName,
-} = require("../../lib/filesEraser");
-const jwtAuthMiddleware = require("../../lib/jwtAuthMiddleware");
+} = require('../../lib/filesEraser');
+const jwtAuthMiddleware = require('../../lib/jwtAuthMiddleware');
 const {
   authUserActionsMiddleware,
-} = require("../../lib/authUserActionsMiddleware");
-const fs = require("fs");
-const { eventEmitter, Events } = require("../../lib/eventEmitter");
+} = require('../../lib/authUserActionsMiddleware');
+const fs = require('fs');
+const { eventEmitter, Events } = require('../../lib/eventEmitter');
 
 router.get(
-  "/",
-  Advertisement.dataValidator("get"),
+  '/',
+  Advertisement.dataValidator('get'),
   async function (req, res, next) {
     try {
       validationResult(req).throw();
@@ -58,14 +58,14 @@ router.get(
 
       res.status(200).json(response);
     } catch (error) {
-      next(createError(500, "Advertisements are not available in this moment"));
+      next(createError(500, 'Advertisements are not available in this moment'));
     }
   }
 );
 
 router.get(
-  "/:id",
-  Advertisement.dataValidator("get"),
+  '/:id',
+  Advertisement.dataValidator('get'),
   async function (req, res, next) {
     try {
       const _id = req.params.id;
@@ -84,10 +84,10 @@ router.get(
 );
 
 router.post(
-  "/",
+  '/',
   jwtAuthMiddleware,
-  upload.single("image"),
-  Advertisement.dataValidator("post"),
+  upload.single('image'),
+  Advertisement.dataValidator('post'),
   async function (req, res, next) {
     try {
       validationResult(req).throw();
@@ -117,7 +117,7 @@ router.post(
 
       let image = null;
       if (req.file) {
-        const destination = req.file?.destination.split("public")[1];
+        const destination = req.file?.destination.split('public')[1];
 
         image = path.join(destination, req.file?.filename);
       }
@@ -128,7 +128,7 @@ router.post(
         username: user[0].username,
       };
 
-      advertisement.tags = advertisement.tags.split(",");
+      advertisement.tags = advertisement.tags.split(',');
 
       const newAdvertisement = new Advertisement({
         ...defaultValues,
@@ -148,14 +148,14 @@ router.post(
         filesEraserFromReq(req.file);
       }
       next(
-        createError(500, "Internal Error: Impossible create the advertisement")
+        createError(500, 'Internal Error: Impossible create the advertisement')
       );
     }
   }
 );
 
 router.delete(
-  "/:id",
+  '/:id',
   jwtAuthMiddleware,
   authUserActionsMiddleware(Advertisement.findAdOwner),
   async function (req, res, next) {
@@ -163,7 +163,7 @@ router.delete(
       const id = req.params.id;
       const ad = await Advertisement.search({ _id: id });
       if (req.userId !== ad[0].idUser._id) {
-        throw createError(401, "This ad is not your property");
+        throw createError(401, 'This ad is not your property');
       }
       const deletedAd = await Advertisement.deleteOne({ _id: id });
       const response = { deletedAd, ad };
@@ -174,7 +174,7 @@ router.delete(
         next(error);
         return;
       }
-      next(createError(400, "Advertisement not in DB"));
+      next(createError(400, 'Advertisement not in DB'));
     }
   }
 );
@@ -182,11 +182,11 @@ router.delete(
 // Actualizar un anuncio
 // PUT => localhost:3001/api/advertisement/_id
 router.put(
-  "/:id",
+  '/:id',
   jwtAuthMiddleware,
-  upload.single("image"),
+  upload.single('image'),
   authUserActionsMiddleware(Advertisement.findAdOwner),
-  Advertisement.dataValidator("put"),
+  Advertisement.dataValidator('put'),
   async (req, res, next) => {
     try {
       validationResult(req).throw();
@@ -212,7 +212,7 @@ router.put(
       let newImage;
 
       if (req.file) {
-        const destination = req.file?.destination.split("public")[1];
+        const destination = req.file?.destination.split('public')[1];
         newImage = path.join(destination, req.file?.filename);
       }
       data.price = parseFloat(data.price);
@@ -239,7 +239,7 @@ router.put(
         filesEraserFromName(imageToErase);
       }
 
-      data.tags = data.tags.split(",");
+      data.tags = data.tags.split(',');
 
       let newData = {
         ...data,
@@ -267,8 +267,8 @@ router.put(
 // añadir o quitar de favoritos
 // PUT => http://localhost:3000/api/advertisement/id/subscriptions
 router.put(
-  "/:id/adssubscriptions",
-  upload.single("image"),
+  '/:id/adssubscriptions',
+  upload.single('image'),
   async (req, res, next) => {
     try {
       validationResult(req).throw();
@@ -289,13 +289,13 @@ router.put(
     try {
       const _id = req.params.id;
       const { idUser, ...data } = req.body;
-      console.log("datos recibidos", data);
+      console.log('datos recibidos', data);
 
       let image = req.file;
       let newImage;
 
       if (req.file) {
-        const destination = req.file?.destination.split("public")[1];
+        const destination = req.file?.destination.split('public')[1];
         newImage = path.join(destination, req.file?.filename);
       }
       data.price = parseFloat(data.price);
@@ -306,12 +306,15 @@ router.put(
         filesEraserFromName(imageToErase);
       }
       console.log(data.subscriptions);
-      data.subscriptions = data.subscriptions.split(",");
+      data.subscriptions
+        ? (data.subscriptions = data.subscriptions.split(','))
+        : (data.subscriptions = []);
+      //      data.subscriptions = data.subscriptions.split(',');
 
       let newData = {
         ...data,
       };
-      console.log("datos nuevos", newData);
+      console.log('datos nuevos', newData);
       if (newImage) {
         newData.image = newImage;
       }

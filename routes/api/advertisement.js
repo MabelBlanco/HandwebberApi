@@ -16,6 +16,7 @@ const {
   authUserActionsMiddleware,
 } = require("../../lib/authUserActionsMiddleware");
 const fs = require("fs");
+const { eventEmitter, Events } = require("../../lib/eventEmitter");
 
 router.get(
   "/",
@@ -215,6 +216,22 @@ router.put(
         newImage = path.join(destination, req.file?.filename);
       }
       data.price = parseFloat(data.price);
+
+      // We compare the current price with the previous one
+      const oldAdvert = await Advertisement.findById(_id);
+
+      if (oldAdvert.price > data.price) {
+        const subscriptors = await User.find({ subscriptions: _id });
+
+        subscriptors.forEach((subscriptor) => {
+          // send notification
+          eventEmitter.emit(Events.PRICE_DROP, {
+            subscriptor,
+            oldAdvert,
+            newPrice: data.price,
+          });
+        });
+      }
 
       if (image) {
         const adToErase = await Advertisement.search({ _id: _id });

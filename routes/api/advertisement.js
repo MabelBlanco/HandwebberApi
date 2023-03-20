@@ -17,6 +17,7 @@ const {
 } = require('../../lib/authUserActionsMiddleware');
 const fs = require('fs');
 const { eventEmitter, Events } = require('../../lib/eventEmitter');
+const publisher = require('../../lib/rabbitmq/publisher');
 
 router.get(
   '/',
@@ -188,12 +189,24 @@ router.delete(
   }
 );
 
+//const prueba = upload.single('image');
 // Actualizar un anuncio
 // PUT => localhost:3001/api/advertisement/_id
 router.put(
   '/:id',
   jwtAuthMiddleware,
   upload.single('image'),
+  // (req, res, next) => {
+  //   upload.single('image')(req, res, function (err) {
+  //     if (err) {
+  //       const error = createError(415, err.message);
+  //       next(error);
+  //       return;
+  //     }
+  //     next();
+  //   });
+  //   next();
+  // },
   authUserActionsMiddleware(Advertisement.findAdOwner),
   Advertisement.dataValidator('put'),
   async (req, res, next) => {
@@ -226,12 +239,14 @@ router.put(
       }
       data.price = parseFloat(data.price);
 
-      // We compare the current price with the previous one
+      // Notifications and emails
       const oldAdvert = await Advertisement.findById(_id);
+      const subscriptors = await User.find({ subscriptions: _id });
+      console.log('antiguo anuncio:', oldAdvert);
+      console.log('nuevo anuncio: ', data);
 
+      // We compare the current price with the previous one, and notification user if Price Drop
       if (oldAdvert.price > data.price) {
-        const subscriptors = await User.find({ subscriptions: _id });
-
         subscriptors.forEach((subscriptor) => {
           // send notification
           eventEmitter.emit(Events.PRICE_DROP, {
@@ -239,6 +254,96 @@ router.put(
             oldAdvert,
             newPrice: data.price,
           });
+
+          //send e-mail
+          const messageConfig = {
+            function: 'sendEmail',
+            email: 'favoritesPriceDrop',
+            user: subscriptor,
+            advert: oldAdvert,
+            newPrice: data.price,
+          };
+          publisher(messageConfig);
+        });
+      }
+
+      // Notification if stock = 0
+      if (oldAdvert.stock > 0 && data.stock === '0') {
+        subscriptors.forEach((subscriptor) => {
+          //send notification
+          eventEmitter.emit(Events.OUT_OF_STOCK, {
+            subscriptor,
+            oldAdvert,
+          });
+
+          //send e-mail
+          const messageConfig = {
+            function: 'sendEmail',
+            email: 'favoritesOutOfStock',
+            user: subscriptor,
+            advert: oldAdvert,
+          };
+          publisher(messageConfig);
+        });
+      }
+
+      // Notification if back in stock
+      if (oldAdvert.stock === 0 && data.stock > 0) {
+        subscriptors.forEach((subscriptor) => {
+          //send notification
+          eventEmitter.emit(Events.BACK_IN_STOCK, {
+            subscriptor,
+            oldAdvert,
+          });
+
+          //send e-mail
+          const messageConfig = {
+            function: 'sendEmail',
+            email: 'favoritesBackInStock',
+            user: subscriptor,
+            advert: oldAdvert,
+          };
+          publisher(messageConfig);
+        });
+      }
+
+      // Notification if turn no active
+      if (oldAdvert.active === true && data.active === 'false') {
+        subscriptors.forEach((subscriptor) => {
+          //send notification
+          eventEmitter.emit(Events.TURN_NO_ACTIVE, {
+            subscriptor,
+            oldAdvert,
+          });
+
+          //send e-mail
+          const messageConfig = {
+            function: 'sendEmail',
+            email: 'favoritesTurnNoActive',
+            user: subscriptor,
+            advert: oldAdvert,
+          };
+          publisher(messageConfig);
+        });
+      }
+
+      // Notification if no active advert turn of active
+      if (oldAdvert.active === false && data.active === 'true') {
+        subscriptors.forEach((subscriptor) => {
+          //send notification
+          eventEmitter.emit(Events.TURN_ACTIVE, {
+            subscriptor,
+            oldAdvert,
+          });
+
+          //send e-mail
+          const messageConfig = {
+            function: 'sendEmail',
+            email: 'favoritesTurnActive',
+            user: subscriptor,
+            advert: oldAdvert,
+          };
+          publisher(messageConfig);
         });
       }
 

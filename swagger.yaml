@@ -28,6 +28,8 @@ tags:
     description: Access to advertisements
   - name: Users
     description: Access to users operations
+  - name: Tags
+    description: Returns the allowed tags for the API
 
 paths:
   /api/advertisement:
@@ -469,6 +471,28 @@ paths:
           schema:
             type: string
             format: email
+      responses:
+        '200':
+          description: response ok
+
+  /api/tags:
+    get:
+      tags:
+        - Tags
+      summary: Returns the allowed tags for handWebber
+      operationId: getTags
+      responses:
+        '200':
+          description: array of tags
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      type: string
 
 components:
   schemas:

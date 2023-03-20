@@ -221,8 +221,6 @@ router.put(
       // Notifications and emails
       const oldAdvert = await Advertisement.findById(_id);
       const subscriptors = await User.find({ subscriptions: _id });
-      console.log("antiguo anuncio:", oldAdvert);
-      console.log("nuevo anuncio: ", data);
 
       // We compare the current price with the previous one, and notification user if Price Drop
       if (oldAdvert.price > data.price) {

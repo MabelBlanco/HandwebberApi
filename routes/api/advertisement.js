@@ -180,12 +180,24 @@ router.delete(
   }
 );
 
+//const prueba = upload.single('image');
 // Actualizar un anuncio
 // PUT => localhost:3001/api/advertisement/_id
 router.put(
   "/:id",
   jwtAuthMiddleware,
   upload.single("image"),
+  // (req, res, next) => {
+  //   upload.single('image')(req, res, function (err) {
+  //     if (err) {
+  //       const error = createError(415, err.message);
+  //       next(error);
+  //       return;
+  //     }
+  //     next();
+  //   });
+  //   next();
+  // },
   authUserActionsMiddleware(Advertisement.findAdOwner),
   Advertisement.dataValidator("put"),
   async (req, res, next) => {
@@ -397,7 +409,10 @@ router.put(
         filesEraserFromName(imageToErase);
       }
       console.log(data.subscriptions);
-      data.subscriptions = data.subscriptions.split(",");
+      data.subscriptions
+        ? (data.subscriptions = data.subscriptions.split(","))
+        : (data.subscriptions = []);
+      //      data.subscriptions = data.subscriptions.split(',');
 
       let newData = {
         ...data,

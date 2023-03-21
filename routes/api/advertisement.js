@@ -169,13 +169,19 @@ router.delete(
       const deletedAd = await Advertisement.deleteOne({ _id: id });
 
       const subscriptors = ad[0].subscriptions;
-      for(let subscriptor of subscriptors){
-        const updateSubscriptor = await User.findById(subscriptor)
-        const updatedSubscriptor = updateSubscriptor.subscriptions.filter(e => e !== id);
-        const updateSubscriptions = { subscriptions: updatedSubscriptor}
-        const newSubscriptions = await User.findOneAndUpdate({_id: subscriptor}, updateSubscriptions, { new: true });
-      };
-      
+      for (let subscriptor of subscriptors) {
+        const updateSubscriptor = await User.findById(subscriptor);
+        const updatedSubscriptor = updateSubscriptor.subscriptions.filter(
+          (e) => e !== id
+        );
+        const updateSubscriptions = { subscriptions: updatedSubscriptor };
+        const newSubscriptions = await User.findOneAndUpdate(
+          { _id: subscriptor },
+          updateSubscriptions,
+          { new: true }
+        );
+      }
+
       const response = { deletedAd, ad };
       filesEraserFromName(ad[0].image);
       res.status(200).json({ result: response });

@@ -327,7 +327,17 @@ class SignupController {
       const id = req.params.id;
       const user = await User.findOne({ _id: id });
       const userDeleted = await User.deleteOne({ _id: id });
-      const { username, _id, mail, image } = user;
+      const { username, _id, mail, image, subscriptions } = user;
+
+      for(let subscription of subscriptions){
+        const adSubscripted = await Advertisement.search({_id: subscription});
+        for(let sub of adSubscripted){
+          const newSubscriptions = sub.subscriptions.filter(e => e !== _id.toString());
+          const updateSubscriptions = {subscriptions: newSubscriptions};      
+          const updatedSubscriptions = await Advertisement.findOneAndUpdate({_id: sub._id}, updateSubscriptions, {new: true});
+        }        
+      };
+
       filesEraserFromName(image);
       const response = {
         ...userDeleted,

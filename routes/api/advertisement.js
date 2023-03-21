@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 const createError = require("http-errors");
 const router = express.Router();
 const upload = require("../../lib/uploadConfig");
-const { Advertisement, User } = require("../../models");
+const { Advertisement, User, Conversation } = require("../../models");
 const path = require("path");
 const {
   filesEraserFromReq,
@@ -169,6 +169,12 @@ router.delete(
       const deletedAd = await Advertisement.deleteOne({ _id: id });
       const response = { deletedAd, ad };
       filesEraserFromName(ad[0].image);
+
+      // Delete conversations too
+      await Conversation.deleteMany({
+        advertisement: id,
+      });
+
       res.status(200).json({ result: response });
     } catch (error) {
       if (error.status === 401) {

@@ -351,7 +351,13 @@ class SignupController {
         const imageAd = ad.image;
         filesEraserFromName(imageAd);
         await Advertisement.deleteOne({ _id: ad._id });
-      }
+        ad.subscriptions.forEach( async (e) => {
+          const userSubscripted = await User.findById(e);
+          const userSubscriptions = userSubscripted.subscriptions.filter( e => e !== ad._id.toString());
+          const newUserSubscriptions = {subscriptions: userSubscriptions};
+          const userUpdatedSubscriptions = await User.findOneAndUpdate({_id: e}, newUserSubscriptions, {new: true});
+        });
+      };
 
       res.status(200).json({ result: response });
     } catch (error) {
